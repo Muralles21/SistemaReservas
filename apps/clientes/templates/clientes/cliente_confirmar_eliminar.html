@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+{% block titulo_pagina %}Eliminar cliente{% endblock %}
+{% block contenido %}
+<div class="card-elegante p-4" style="max-width:480px;">
+  <h6 style="font-weight:500;">¿Eliminar a {{ object.nombre_completo }}?</h6>
+  <p class="text-secondary small">El registro se marcará como inactivo, conservando su historial.</p>
+  <form method="post">
+    {% csrf_token %}
+    <button type="submit" class="btn btn-danger">Confirmar eliminación</button>
+    <a href="{% url 'clientes:lista' %}" class="btn btn-outline-elegante">Cancelar</a>
+  </form>
+</div>
+{% endblock %}

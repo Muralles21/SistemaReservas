@@ -1,0 +1,8 @@
+<table class="tabla">
+<tr><td>Reservación</td><td><strong>#{{ r.pk }}</strong></td></tr>
+<tr><td>Espacio</td><td>{{ r.espacio.nombre }} ({{ r.espacio.get_tipo_display }})</td></tr>
+<tr><td>Fecha</td><td>{{ r.fecha_inicio|date:"l d \d\e F \d\e Y" }}</td></tr>
+<tr><td>Horario</td><td>{{ r.fecha_inicio|date:"H:i" }} a {{ r.fecha_fin|date:"H:i" }}</td></tr>
+<tr><td>Total</td><td>Q{{ r.precio_total|floatformat:"2u" }}</td></tr>
+<tr><td>Estado</td><td>{{ r.get_estado_display }}</td></tr>
+</table>

@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+{% block titulo_pagina %}{{ espacio.nombre }}{% endblock %}
+{% block contenido %}
+<div class="row g-3">
+  <div class="col-lg-5">
+    {% if espacio.foto_principal %}
+      <img src="{{ espacio.foto_principal.url }}" class="w-100 mb-2" style="border-radius:14px;height:260px;object-fit:cover;">
+    {% endif %}
+    <div class="row g-2">
+      {% for foto in espacio.fotos.all %}
+      <div class="col-4"><img src="{{ foto.imagen.url }}" class="w-100" style="border-radius:10px;height:80px;object-fit:cover;"></div>
+      {% endfor %}
+    </div>
+  </div>
+  <div class="col-lg-7">
+    <div class="card-elegante p-4">
+      <div class="d-flex justify-content-between align-items-start">
+        <h5 style="font-weight:600;">{{ espacio.nombre }}</h5>
+        <span class="badge-estado badge-{{ espacio.estado|lower }}">{{ espacio.get_estado_display }}</span>
+      </div>
+      <p class="text-secondary">{{ espacio.get_tipo_display }} · Capacidad para {{ espacio.capacidad }} personas</p>
+      <p>{{ espacio.descripcion|default:"Sin descripción." }}</p>
+      <h4 style="font-weight:600;">Q{{ espacio.precio_por_evento }} <span class="text-secondary fw-normal small">/ evento</span></h4>
+      <div class="d-flex gap-2 mt-3">
+        <a href="{% url 'reservaciones:crear' %}" class="btn btn-primario">Crear reservación</a>
+        <a href="{% url 'espacios:editar' espacio.pk %}" class="btn btn-outline-elegante">Editar</a>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

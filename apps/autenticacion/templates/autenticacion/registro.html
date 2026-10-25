@@ -1,0 +1,70 @@
+{% extends 'base.html' %}
+{% block titulo %}Crear cuenta · {{ NOMBRE_SISTEMA }}{% endblock %}
+{% block contenido_publico %}
+<div class="login-shell py-5">
+  <div class="login-card" style="width:min(520px,100%);">
+    {% include 'partials/auth_marca.html' with lema='Crea tu cuenta de cliente: reserva y acumula puntos' %}
+
+    {% if form.non_field_errors %}
+      <div class="alert alert-danger" style="border-radius:10px;">{{ form.non_field_errors }}</div>
+    {% endif %}
+
+    <form method="post" enctype="multipart/form-data" novalidate>
+      {% csrf_token %}
+      <div class="row g-3">
+        <div class="col-md-6">
+          <label class="form-label">Nombres</label>
+          {{ form.nombres }}
+        </div>
+        <div class="col-md-6">
+          <label class="form-label">Apellidos</label>
+          {{ form.apellidos }}
+        </div>
+        <div class="col-md-6">
+          <label class="form-label">DPI</label>
+          {{ form.dpi }}
+          {% if form.dpi.errors %}<div class="text-danger small">{{ form.dpi.errors|join:", " }}</div>{% endif %}
+        </div>
+        <div class="col-md-6">
+          <label class="form-label">Teléfono</label>
+          {{ form.telefono }}
+        </div>
+        <div class="col-12">
+          <label class="form-label">Dirección</label>
+          {{ form.direccion }}
+        </div>
+        <div class="col-md-6">
+          <label class="form-label">Correo electrónico</label>
+          {{ form.correo }}
+          {% if form.correo.errors %}<div class="text-danger small">{{ form.correo.errors|join:", " }}</div>{% endif %}
+        </div>
+        <div class="col-md-6">
+          <label class="form-label">Fotografía (opcional)</label>
+          {{ form.foto }}
+        </div>
+        <div class="col-12"><hr></div>
+        <div class="col-md-6">
+          <label class="form-label">Usuario</label>
+          {{ form.username }}
+          {% if form.username.errors %}<div class="text-danger small">{{ form.username.errors|join:", " }}</div>{% endif %}
+        </div>
+        <div class="col-md-6"></div>
+        <div class="col-md-6">
+          <label class="form-label">Contraseña</label>
+          {{ form.password1 }}
+        </div>
+        <div class="col-md-6">
+          <label class="form-label">Confirmar contraseña</label>
+          {{ form.password2 }}
+          {% if form.password2.errors %}<div class="text-danger small">{{ form.password2.errors|join:", " }}</div>{% endif %}
+        </div>
+      </div>
+
+      <button type="submit" class="btn btn-primario w-100 mt-4">Crear mi cuenta</button>
+    </form>
+    <div class="text-center mt-3">
+      <a href="{% url 'autenticacion:login' %}" class="small text-secondary">Ya tengo cuenta, iniciar sesión</a>
+    </div>
+  </div>
+</div>
+{% endblock %}

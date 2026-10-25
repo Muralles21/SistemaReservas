@@ -1,0 +1,88 @@
+{% extends 'base.html' %}
+{% block titulo_pagina %}Mi cuenta{% endblock %}
+{% block contenido %}
+<div class="row g-3">
+  <div class="col-lg-4">
+    <div class="card-elegante p-4 text-center">
+      {% if cliente.foto %}
+        <img src="{{ cliente.foto.url }}" class="rounded-circle mb-3" style="width:96px;height:96px;object-fit:cover;">
+      {% else %}
+        <div class="avatar-circulo mx-auto mb-3" style="width:96px;height:96px;font-size:32px;">{{ cliente.nombres|first|upper }}</div>
+      {% endif %}
+      <h5 style="font-weight:600;">{{ cliente.nombre_completo }}</h5>
+      <p class="text-secondary small mb-1"><i class="bi bi-telephone me-1"></i>{{ cliente.telefono }}</p>
+      <p class="text-secondary small"><i class="bi bi-envelope me-1"></i>{{ cliente.correo }}</p>
+      <div class="d-flex justify-content-center gap-2 mt-2">
+        <span class="badge-estado badge-confirmada"><i class="bi bi-star-fill me-1"></i>{{ cliente.puntos_disponibles }} puntos</span>
+      </div>
+      <a href="{% url 'reservaciones:solicitar' %}" class="btn btn-primario w-100 mt-3"><i class="bi bi-plus-lg me-1"></i>Solicitar reservación</a>
+      <a href="{% url 'reservaciones:calendario' %}" class="btn btn-outline-elegante w-100 mt-2"><i class="bi bi-calendar3 me-1"></i>Ver disponibilidad</a>
+    </div>
+
+    <div class="card-elegante p-3 mt-3">
+      <h6 class="mb-2" style="font-weight:500;">Canjear un premio</h6>
+      {% if premios_disponibles %}
+      <form method="post" action="{% url 'fidelizacion:canjear' cliente.pk %}">
+        {% csrf_token %}
+        <select name="premio" class="form-select mb-2">
+          {% for premio in premios_disponibles %}
+          <option value="{{ premio.pk }}">{{ premio.nombre }} ({{ premio.costo_puntos }} pts)</option>
+          {% endfor %}
+        </select>
+        <button type="submit" class="btn btn-primario w-100 btn-sm">Canjear</button>
+      </form>
+      {% else %}
+      <p class="text-secondary small mb-0">Aún no tienes puntos suficientes para canjear un premio.</p>
+      {% endif %}
+    </div>
+  </div>
+
+  <div class="col-lg-8">
+    <div class="card-elegante p-3 mb-3">
+      <h6 class="mb-3" style="font-weight:500;">Mis reservaciones</h6>
+      <table class="tabla-elegante">
+        <thead><tr><th>Cancha / salón</th><th>Fecha</th><th>Estado</th><th>Precio</th><th></th></tr></thead>
+        <tbody>
+          {% for r in reservaciones %}
+          <tr>
+            <td>{{ r.espacio.nombre }}</td>
+            <td>{{ r.fecha_inicio|date:"d/m/Y H:i" }}</td>
+            <td><span class="badge-estado badge-{{ r.estado|lower }}">{{ r.get_estado_display }}</span></td>
+            <td>Q{{ r.precio_total }}</td>
+            <td class="text-end">
+              {% if r.estado == 'PENDIENTE' or r.estado == 'CONFIRMADA' %}
+              <form method="post" action="{% url 'reservaciones:mi_cancelar' r.pk %}" onsubmit="return confirm('¿Cancelar esta reservación?');">
+                {% csrf_token %}
+                <button class="btn btn-sm btn-outline-elegante text-danger">Cancelar</button>
+              </form>
+              {% endif %}
+            </td>
+          </tr>
+          {% empty %}
+          <tr><td colspan="5" class="text-center text-secondary py-4">Aún no tienes reservaciones. ¡Solicita la primera!</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
+    <div class="card-elegante p-3">
+      <h6 class="mb-3" style="font-weight:500;">Movimientos de puntos recientes</h6>
+      <table class="tabla-elegante">
+        <thead><tr><th>Tipo</th><th>Puntos</th><th>Fecha</th><th>Descripción</th></tr></thead>
+        <tbody>
+          {% for m in movimientos_puntos %}
+          <tr>
+            <td>{{ m.get_tipo_display }}</td>
+            <td class="{% if m.puntos < 0 %}text-danger{% else %}text-success{% endif %}">{{ m.puntos }}</td>
+            <td>{{ m.fecha|date:"d/m/Y" }}</td>
+            <td>{{ m.descripcion }}</td>
+          </tr>
+          {% empty %}
+          <tr><td colspan="4" class="text-center text-secondary py-3">Sin movimientos registrados.</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+{% endblock %}

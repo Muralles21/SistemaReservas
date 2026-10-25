@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+{% block titulo_pagina %}Calendario de reservaciones{% endblock %}
+{% block contenido %}
+<div id="calendario" role="region" aria-label="Calendario de reservaciones"></div>
+{% endblock %}
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/index.global.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@fullcalendar/core@6.1.15/locales/es.global.min.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  var calendarEl = document.getElementById('calendario');
+  var esMovil = window.matchMedia('(max-width: 767.98px)').matches;
+  var calendar = new FullCalendar.Calendar(calendarEl, {
+    locale: 'es',
+    height: 'auto',
+    initialView: esMovil ? 'listWeek' : 'dayGridMonth',
+    headerToolbar: esMovil
+      ? { left: 'prev,next', center: 'title', right: 'listWeek,dayGridMonth' }
+      : { left: 'prev,next today', center: 'title', right: 'dayGridMonth,timeGridWeek,listWeek' },
+    events: "{% url 'reservaciones:eventos_json' %}",
+    eventClick: function (info) {
+      info.jsEvent.preventDefault();
+      if (info.event.url) { window.location = info.event.url; }
+    }
+  });
+  calendar.render();
+});
+</script>
+{% endblock %}

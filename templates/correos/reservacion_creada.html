@@ -1,0 +1,8 @@
+{% extends "correos/base_correo.html" %}
+{% block cuerpo %}
+<p>Hola <strong>{{ cliente.nombres }}</strong>,</p>
+<p>Recibimos tu solicitud de reservación. Estos son los datos:</p>
+{% include "correos/_resumen.html" %}
+{% if r.estado == "PENDIENTE" %}<div class="aviso">Tu reservación está <strong>pendiente</strong>. Se confirmará cuando el personal reciba tu pago. Te avisaremos por este medio.</div>{% endif %}
+<p><a class="btn" href="{{ SITE_URL }}/clientes/mi-cuenta/">Ver mis reservaciones</a></p>
+{% endblock %}

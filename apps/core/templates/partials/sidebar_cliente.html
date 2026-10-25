@@ -1,0 +1,19 @@
+<aside class="sidebar" id="sidebar">
+  <div class="marca">
+    <i class="bi bi-calendar2-check"></i>
+    <span>{{ NOMBRE_SISTEMA }}</span>
+  </div>
+
+  <a href="{% url 'clientes:mi_cuenta' %}" class="nav-link-sidebar {% if ruta_actual == 'mi_cuenta' %}activo{% endif %}">
+    <i class="bi bi-person-circle"></i> Mi cuenta
+  </a>
+  <a href="{% url 'reservaciones:calendario' %}" class="nav-link-sidebar {% if ruta_actual == 'calendario' %}activo{% endif %}">
+    <i class="bi bi-calendar3"></i> Ver disponibilidad
+  </a>
+  <a href="{% url 'reservaciones:solicitar' %}" class="nav-link-sidebar {% if ruta_actual == 'solicitar' %}activo{% endif %}">
+    <i class="bi bi-calendar-plus"></i> Solicitar reservación
+  </a>
+  <a href="{% url 'autenticacion:cambiar_password' %}" class="nav-link-sidebar {% if ruta_actual == 'cambiar_password' %}activo{% endif %}">
+    <i class="bi bi-key"></i> Cambiar contraseña
+  </a>
+</aside>

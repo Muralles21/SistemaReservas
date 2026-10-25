@@ -1,0 +1,6 @@
+{% extends "correos/base_correo.html" %}
+{% block cuerpo %}
+<p>El cliente canceló una reservación.</p>
+<table class="tabla"><tr><td>Cliente</td><td>{{ cliente.nombre_completo }}</td></tr></table>
+{% include "correos/_resumen.html" %}
+{% endblock %}

@@ -1,0 +1,63 @@
+{% extends 'base.html' %}
+{% block titulo_pagina %}{% if object %}Editar cancha o salón{% else %}Nueva cancha o salón{% endif %}{% endblock %}
+{% block contenido %}
+<div class="card-elegante p-4" style="max-width:720px;">
+  <form method="post" enctype="multipart/form-data" novalidate>
+    {% csrf_token %}
+    <div class="row g-3">
+      <div class="col-md-8">
+        <label class="form-label">Nombre</label>
+        {{ form.nombre }}
+      </div>
+      <div class="col-md-4">
+        <label class="form-label">Tipo</label>
+        {{ form.tipo }}
+      </div>
+      <div class="col-12">
+        <label class="form-label">Descripción</label>
+        {{ form.descripcion }}
+      </div>
+      <div class="col-md-4">
+        <label class="form-label">Precio por evento (Q)</label>
+        {{ form.precio_por_evento }}
+      </div>
+      <div class="col-md-4">
+        <label class="form-label">Capacidad</label>
+        {{ form.capacidad }}
+      </div>
+      <div class="col-md-4">
+        <label class="form-label">Estado</label>
+        {{ form.estado }}
+      </div>
+      <div class="col-md-6">
+        <label class="form-label">Fotografía principal</label>
+        {{ form.foto_principal }}
+        {% if object.foto_principal %}
+        <img src="{{ object.foto_principal.url }}" class="mt-2" style="height:80px;border-radius:8px;">
+        {% endif %}
+      </div>
+    </div>
+
+    <hr class="my-4">
+    <h6 style="font-weight:500;">Galería de fotografías</h6>
+    <p class="text-secondary small">Agrega hasta varias fotos adicionales de la cancha o salón (opcional).</p>
+    {{ formset_fotos.management_form }}
+    <div class="row g-3">
+      {% for f in formset_fotos %}
+      <div class="col-md-4">
+        {% if f.instance.imagen %}
+        <img src="{{ f.instance.imagen.url }}" class="w-100 mb-1" style="height:90px;object-fit:cover;border-radius:8px;">
+        {% endif %}
+        {{ f.imagen }}
+        {% if f.instance.pk %}<div class="form-check mt-1"><label class="form-check-label small">{{ f.DELETE }} Eliminar esta foto</label></div>{% endif %}
+      </div>
+      {% endfor %}
+    </div>
+
+    <div class="mt-4 d-flex gap-2">
+      <button type="submit" class="btn btn-primario">Guardar</button>
+      <a href="{% url 'espacios:lista' %}" class="btn btn-outline-elegante">Cancelar</a>
+    </div>
+  </form>
+</div>
+{% endblock %}

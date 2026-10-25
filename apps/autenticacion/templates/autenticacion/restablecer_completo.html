@@ -1,0 +1,11 @@
+{% extends 'base.html' %}
+{% block contenido_publico %}
+<div class="login-shell">
+  <div class="login-card text-center">
+    {% include 'partials/auth_marca.html' %}
+    <i class="bi bi-check-circle" style="font-size:32px;color:#0F6E56;"></i>
+    <h5 class="mt-2" style="font-weight:600;">Contraseña actualizada</h5>
+    <a href="{% url 'autenticacion:login' %}" class="btn btn-primario w-100 mt-3">Iniciar sesión</a>
+  </div>
+</div>
+{% endblock %}

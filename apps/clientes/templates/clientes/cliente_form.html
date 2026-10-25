@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+{% block titulo_pagina %}{% if object %}Editar cliente{% else %}Nuevo cliente{% endif %}{% endblock %}
+{% block contenido %}
+<div class="card-elegante p-4" style="max-width:640px;">
+  <form method="post" enctype="multipart/form-data" novalidate>
+    {% csrf_token %}
+    <div class="row g-3">
+      <div class="col-md-6">
+        <label class="form-label">Nombres</label>
+        {{ form.nombres }}
+      </div>
+      <div class="col-md-6">
+        <label class="form-label">Apellidos</label>
+        {{ form.apellidos }}
+      </div>
+      <div class="col-md-6">
+        <label class="form-label">DPI</label>
+        {{ form.dpi }}
+        {% if form.dpi.errors %}<div class="text-danger small">{{ form.dpi.errors|join:", " }}</div>{% endif %}
+      </div>
+      <div class="col-md-6">
+        <label class="form-label">Teléfono</label>
+        {{ form.telefono }}
+      </div>
+      <div class="col-12">
+        <label class="form-label">Dirección</label>
+        {{ form.direccion }}
+      </div>
+      <div class="col-md-6">
+        <label class="form-label">Correo electrónico</label>
+        {{ form.correo }}
+      </div>
+      <div class="col-md-6">
+        <label class="form-label">Fotografía</label>
+        {{ form.foto }}
+      </div>
+    </div>
+    <div class="mt-4 d-flex gap-2">
+      <button type="submit" class="btn btn-primario">Guardar</button>
+      <a href="{% url 'clientes:lista' %}" class="btn btn-outline-elegante">Cancelar</a>
+    </div>
+  </form>
+</div>
+{% endblock %}

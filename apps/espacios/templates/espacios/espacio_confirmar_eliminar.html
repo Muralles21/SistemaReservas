@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+{% block titulo_pagina %}Eliminar espacio{% endblock %}
+{% block contenido %}
+<div class="card-elegante p-4" style="max-width:480px;">
+  <h6 style="font-weight:500;">¿Eliminar "{{ object.nombre }}"?</h6>
+  <form method="post">
+    {% csrf_token %}
+    <button type="submit" class="btn btn-danger">Confirmar eliminación</button>
+    <a href="{% url 'espacios:lista' %}" class="btn btn-outline-elegante">Cancelar</a>
+  </form>
+</div>
+{% endblock %}

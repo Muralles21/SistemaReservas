@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+{% block titulo_pagina %}Canchas y salones{% endblock %}
+{% block contenido %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <form method="get" class="d-flex gap-2">
+    <select name="tipo" class="form-select" onchange="this.form.submit()">
+      <option value="">Todos los tipos</option>
+      <option value="RECREATIVO" {% if request.GET.tipo == 'RECREATIVO' %}selected{% endif %}>Cancha de fútbol</option>
+      <option value="SALON" {% if request.GET.tipo == 'SALON' %}selected{% endif %}>Salón de eventos</option>
+    </select>
+  </form>
+  <a href="{% url 'espacios:crear' %}" class="btn btn-primario"><i class="bi bi-plus-lg me-1"></i>Nueva cancha o salón</a>
+</div>
+
+<div class="row g-3">
+  {% for e in espacios %}
+  <div class="col-md-4">
+    <div class="card-elegante h-100">
+      {% if e.foto_principal %}
+        <img src="{{ e.foto_principal.url }}" class="w-100" style="height:160px;object-fit:cover;border-radius:14px 14px 0 0;">
+      {% else %}
+        <div class="d-flex align-items-center justify-content-center" style="height:160px;background:#F0EFEA;border-radius:14px 14px 0 0;">
+          <i class="bi bi-image text-secondary" style="font-size:28px;"></i>
+        </div>
+      {% endif %}
+      <div class="p-3">
+        <div class="d-flex justify-content-between align-items-start">
+          <h6 class="mb-1" style="font-weight:500;">{{ e.nombre }}</h6>
+          <span class="badge-estado badge-{{ e.estado|lower }}">{{ e.get_estado_display }}</span>
+        </div>
+        <p class="text-secondary small mb-2">{{ e.get_tipo_display }} · Capacidad {{ e.capacidad }}</p>
+        <p class="mb-2" style="font-weight:600;">Q{{ e.precio_por_evento }} <span class="text-secondary fw-normal small">/ evento</span></p>
+        <div class="d-flex gap-2">
+          <a href="{% url 'espacios:detalle' e.pk %}" class="btn btn-sm btn-outline-elegante flex-grow-1">Ver</a>
+          <a href="{% url 'espacios:editar' e.pk %}" class="btn btn-sm btn-outline-elegante"><i class="bi bi-pencil"></i></a>
+        </div>
+      </div>
+    </div>
+  </div>
+  {% empty %}
+  <div class="col-12 text-center text-secondary py-5">No hay espacios registrados.</div>
+  {% endfor %}
+</div>
+{% include 'partials/paginacion.html' with pagina=page_obj %}
+{% endblock %}

@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+{% block titulo_pagina %}Registrar pago{% endblock %}
+{% block contenido %}
+<div class="card-elegante p-4" style="max-width:520px;">
+  <p class="text-secondary small mb-1">Reservación</p>
+  <p style="font-weight:500;">{{ reservacion.espacio.nombre }} · {{ reservacion.cliente.nombre_completo }}</p>
+  <p class="text-secondary small">Saldo pendiente: <strong>Q{{ reservacion.saldo_pendiente }}</strong></p>
+  <form method="post" novalidate>
+    {% csrf_token %}
+    <div class="mb-3">
+      <label class="form-label">Tipo de pago</label>
+      {{ form.tipo }}
+    </div>
+    <div class="mb-3">
+      <label class="form-label">Monto (Q)</label>
+      {{ form.monto }}
+      {% if form.monto.errors %}<div class="text-danger small">{{ form.monto.errors|join:", " }}</div>{% endif %}
+    </div>
+    <div class="mb-3">
+      <label class="form-label">Método de pago</label>
+      {{ form.metodo_pago }}
+    </div>
+    <div class="mb-3">
+      <label class="form-label">Estado</label>
+      {{ form.estado }}
+    </div>
+    <div class="mb-3">
+      <label class="form-label">Referencia (opcional)</label>
+      {{ form.referencia }}
+    </div>
+    <button type="submit" class="btn btn-primario">Registrar pago</button>
+    <a href="{% url 'reservaciones:detalle' reservacion.pk %}" class="btn btn-outline-elegante">Cancelar</a>
+  </form>
+</div>
+{% endblock %}

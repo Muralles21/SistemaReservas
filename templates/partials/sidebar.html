@@ -1,0 +1,60 @@
+{% load static %}
+<aside class="sidebar" id="sidebar" aria-label="Navegación principal">
+  <a class="marca" href="{% url 'core:inicio' %}">
+    <img src="{% static 'img/logo.svg' %}" alt="" width="38" height="38">
+    <span>{{ NOMBRE_SISTEMA }}</span>
+  </a>
+
+  <a href="{% url 'dashboard:inicio' %}" class="nav-link-sidebar {% if app_actual == 'dashboard' %}activo{% endif %}" {% if app_actual == 'dashboard' %}aria-current="page"{% endif %}>
+    <i class="bi bi-speedometer2" aria-hidden="true"></i> Dashboard
+  </a>
+
+  <div class="nav-grupo-titulo">Operación</div>
+  <a href="{% url 'clientes:lista' %}" class="nav-link-sidebar {% if app_actual == 'clientes' %}activo{% endif %}" {% if app_actual == 'clientes' %}aria-current="page"{% endif %}>
+    <i class="bi bi-people" aria-hidden="true"></i> Clientes
+  </a>
+  <a href="{% url 'espacios:lista' %}" class="nav-link-sidebar {% if app_actual == 'espacios' %}activo{% endif %}" {% if app_actual == 'espacios' %}aria-current="page"{% endif %}>
+    <i class="bi bi-building" aria-hidden="true"></i> Canchas y salones
+  </a>
+  <a href="{% url 'reservaciones:lista' %}" class="nav-link-sidebar {% if app_actual == 'reservaciones' and ruta_actual != 'calendario' %}activo{% endif %}" {% if app_actual == 'reservaciones' and ruta_actual != 'calendario' %}aria-current="page"{% endif %}>
+    <i class="bi bi-journal-check" aria-hidden="true"></i> Reservaciones
+  </a>
+  <a href="{% url 'reservaciones:calendario' %}" class="nav-link-sidebar {% if ruta_actual == 'calendario' %}activo{% endif %}" {% if ruta_actual == 'calendario' %}aria-current="page"{% endif %}>
+    <i class="bi bi-calendar3" aria-hidden="true"></i> Calendario
+  </a>
+  <a href="{% url 'pagos:lista' %}" class="nav-link-sidebar {% if app_actual == 'pagos' %}activo{% endif %}" {% if app_actual == 'pagos' %}aria-current="page"{% endif %}>
+    <i class="bi bi-credit-card" aria-hidden="true"></i> Pagos
+  </a>
+
+  <div class="nav-grupo-titulo">Fidelización</div>
+  <a href="{% url 'fidelizacion:premios' %}" class="nav-link-sidebar {% if ruta_actual == 'premios' %}activo{% endif %}" {% if ruta_actual == 'premios' %}aria-current="page"{% endif %}>
+    <i class="bi bi-gift" aria-hidden="true"></i> Catálogo de premios
+  </a>
+  <a href="{% url 'fidelizacion:canjes' %}" class="nav-link-sidebar {% if ruta_actual == 'canjes' %}activo{% endif %}" {% if ruta_actual == 'canjes' %}aria-current="page"{% endif %}>
+    <i class="bi bi-arrow-left-right" aria-hidden="true"></i> Canjes
+  </a>
+  <a href="{% url 'fidelizacion:historial' %}" class="nav-link-sidebar {% if ruta_actual == 'historial' %}activo{% endif %}" {% if ruta_actual == 'historial' %}aria-current="page"{% endif %}>
+    <i class="bi bi-clock-history" aria-hidden="true"></i> Historial de puntos
+  </a>
+
+  <div class="nav-grupo-titulo">Análisis</div>
+  <a href="{% url 'reportes:menu' %}" class="nav-link-sidebar {% if app_actual == 'reportes' %}activo{% endif %}" {% if app_actual == 'reportes' %}aria-current="page"{% endif %}>
+    <i class="bi bi-file-earmark-bar-graph" aria-hidden="true"></i> Reportes
+  </a>
+
+  {% if user.is_superuser or user.rol.clave == 'ADMINISTRADOR' %}
+  <div class="nav-grupo-titulo">Administración</div>
+  <a href="{% url 'usuarios:lista' %}" class="nav-link-sidebar {% if ruta_actual == 'lista' and app_actual == 'usuarios' %}activo{% endif %}" {% if ruta_actual == 'lista' and app_actual == 'usuarios' %}aria-current="page"{% endif %}>
+    <i class="bi bi-person-badge" aria-hidden="true"></i> Usuarios
+  </a>
+  <a href="{% url 'usuarios:rol_lista' %}" class="nav-link-sidebar {% if ruta_actual == 'rol_lista' %}activo{% endif %}" {% if ruta_actual == 'rol_lista' %}aria-current="page"{% endif %}>
+    <i class="bi bi-shield-lock" aria-hidden="true"></i> Roles y permisos
+  </a>
+  <a href="{% url 'usuarios:bitacora' %}" class="nav-link-sidebar {% if ruta_actual == 'bitacora' %}activo{% endif %}" {% if ruta_actual == 'bitacora' %}aria-current="page"{% endif %}>
+    <i class="bi bi-list-check" aria-hidden="true"></i> Bitácora
+  </a>
+  <a href="{% url 'fidelizacion:configuracion' %}" class="nav-link-sidebar {% if ruta_actual == 'configuracion' %}activo{% endif %}" {% if ruta_actual == 'configuracion' %}aria-current="page"{% endif %}>
+    <i class="bi bi-gear" aria-hidden="true"></i> Configuración
+  </a>
+  {% endif %}
+</aside>

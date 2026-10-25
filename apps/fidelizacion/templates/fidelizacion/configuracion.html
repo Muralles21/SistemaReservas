@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+{% block titulo_pagina %}Configuración de fidelización{% endblock %}
+{% block contenido %}
+<div class="card-elegante p-4" style="max-width:480px;">
+  <form method="post">
+    {% csrf_token %}
+    <div class="mb-3"><label class="form-label">Puntos por reservación finalizada</label>{{ form.puntos_por_reservacion }}</div>
+    <div class="mb-3"><label class="form-label">Monto (Q) por punto adicional</label>{{ form.monto_por_punto_extra }}</div>
+    <div class="mb-3"><label class="form-label">Días de expiración (0 = no expiran)</label>{{ form.dias_expiracion_puntos }}</div>
+    <button class="btn btn-primario">Guardar configuración</button>
+  </form>
+</div>
+{% endblock %}

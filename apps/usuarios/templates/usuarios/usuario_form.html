@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+{% block titulo_pagina %}{% if object %}Editar usuario{% else %}Nuevo usuario{% endif %}{% endblock %}
+{% block contenido %}
+<div class="card-elegante p-4" style="max-width:640px;">
+  {% if form.non_field_errors %}
+    <div class="alert alert-danger" style="border-radius:10px;">{{ form.non_field_errors }}</div>
+  {% endif %}
+  <form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    <div class="row g-3">
+      <div class="col-md-6">
+        <label class="form-label">Usuario</label>
+        {{ form.username }}
+        {% if form.username.errors %}<div class="text-danger small">{{ form.username.errors|join:", " }}</div>{% endif %}
+      </div>
+      <div class="col-md-6">
+        <label class="form-label">Correo</label>
+        {{ form.email }}
+        {% if form.email.errors %}<div class="text-danger small">{{ form.email.errors|join:", " }}</div>{% endif %}
+      </div>
+      <div class="col-md-6"><label class="form-label">Nombres</label>{{ form.first_name }}</div>
+      <div class="col-md-6"><label class="form-label">Apellidos</label>{{ form.last_name }}</div>
+      <div class="col-md-6"><label class="form-label">Teléfono</label>{{ form.telefono }}</div>
+      <div class="col-md-6"><label class="form-label">Rol</label>{{ form.rol }}</div>
+      {% if form.password1 %}
+      <div class="col-md-6">
+        <label class="form-label">Contraseña</label>
+        {{ form.password1 }}
+        {% if form.password1.errors %}<div class="text-danger small">{{ form.password1.errors|join:", " }}</div>{% endif %}
+        <div class="text-secondary small">Mínimo 8 caracteres, no puede ser solo números ni una contraseña común.</div>
+      </div>
+      <div class="col-md-6">
+        <label class="form-label">Confirmar contraseña</label>
+        {{ form.password2 }}
+        {% if form.password2.errors %}<div class="text-danger small">{{ form.password2.errors|join:", " }}</div>{% endif %}
+      </div>
+      {% endif %}
+      <div class="col-md-6"><label class="form-label">Fotografía</label>{{ form.foto }}</div>
+      <div class="col-md-6 d-flex align-items-center gap-2 mt-4">{{ form.is_active }}<label class="form-label mb-0">Usuario activo</label></div>
+    </div>
+    <div class="mt-4 d-flex gap-2">
+      <button class="btn btn-primario">Guardar</button>
+      <a href="{% url 'usuarios:lista' %}" class="btn btn-outline-elegante">Cancelar</a>
+    </div>
+  </form>
+</div>
+{% endblock %}

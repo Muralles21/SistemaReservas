@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+{% block titulo_pagina %}{% if object %}Editar reservación{% else %}Nueva reservación{% endif %}{% endblock %}
+{% block contenido %}
+<div class="card-elegante p-4" style="max-width:640px;">
+  {% if form.non_field_errors %}
+  <div class="alert alert-danger" style="border-radius:10px;">{{ form.non_field_errors }}</div>
+  {% endif %}
+  <form method="post" novalidate>
+    {% csrf_token %}
+    <div class="row g-3">
+      <div class="col-md-6">
+        <label class="form-label">Cliente</label>
+        {{ form.cliente }}
+      </div>
+      <div class="col-md-6">
+        <label class="form-label">Espacio</label>
+        {{ form.espacio }}
+      </div>
+      <div class="col-md-6">
+        <label class="form-label">Fecha y hora de inicio</label>
+        {{ form.fecha_inicio }}
+      </div>
+      <div class="col-md-6">
+        <label class="form-label">Fecha y hora de fin</label>
+        {{ form.fecha_fin }}
+      </div>
+      <div class="col-12">
+        <label class="form-label">Observaciones</label>
+        {{ form.observaciones }}
+      </div>
+    </div>
+    <div class="mt-4 d-flex gap-2">
+      <button type="submit" class="btn btn-primario">Guardar</button>
+      <a href="{% url 'reservaciones:lista' %}" class="btn btn-outline-elegante">Cancelar</a>
+    </div>
+  </form>
+</div>
+{% endblock %}

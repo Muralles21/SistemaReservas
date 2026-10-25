@@ -1,0 +1,9 @@
+{% extends "correos/base_correo.html" %}
+{% block cuerpo %}
+<p>Hola <strong>{{ cliente.nombres }}</strong>,</p>
+<p>Tu cuenta fue creada correctamente. Ya puedes iniciar sesión, ver las canchas y salones disponibles y reservar en línea.</p>
+<table class="tabla"><tr><td>Usuario</td><td><strong>{{ usuario.username }}</strong></td></tr>
+<tr><td>Correo</td><td>{{ usuario.email }}</td></tr></table>
+<p><a class="btn" href="{{ SITE_URL }}/cuenta/login/">Iniciar sesión</a></p>
+<p style="color:#5b6b64;font-size:13px">Si no creaste esta cuenta, ignora este mensaje o contáctanos para desactivarla.</p>
+{% endblock %}

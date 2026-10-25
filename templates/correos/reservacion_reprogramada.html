@@ -1,0 +1,6 @@
+{% extends "correos/base_correo.html" %}
+{% block cuerpo %}
+<p>Hola <strong>{{ cliente.nombres }}</strong>,</p>
+<p>Tu reservación fue reprogramada. El nuevo horario es:</p>
+{% include "correos/_resumen.html" %}
+{% endblock %}

@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+{% load static assets imagenes %}
+{% block titulo %}Canchas y salones · {{ NOMBRE_SISTEMA }}{% endblock %}
+{% block titulo_pagina %}Canchas y salones{% endblock %}
+{% block extra_css %}<link rel="stylesheet" href="{% static_v 'css/landing.css' %}">{% endblock %}
+{% block contenido %}
+<div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-4">
+  <form method="get" class="d-flex gap-2">
+    <label for="filtro-tipo" class="visually-hidden">Filtrar por tipo</label>
+    <select id="filtro-tipo" name="tipo" class="form-select" onchange="this.form.submit()">
+      <option value="">Todos los tipos</option>
+      <option value="RECREATIVO" {% if request.GET.tipo == 'RECREATIVO' %}selected{% endif %}>Cancha de fútbol</option>
+      <option value="SALON" {% if request.GET.tipo == 'SALON' %}selected{% endif %}>Salón de eventos</option>
+    </select>
+  </form>
+  <a href="{% url 'reservaciones:solicitar' %}" class="btn btn-primario"><i class="bi bi-calendar-plus" aria-hidden="true"></i> Solicitar reservación</a>
+</div>
+
+<div class="row g-4">
+  {% for e in espacios %}
+  <div class="col-md-6 col-xl-4">
+    <article class="lp-card">
+      <div class="lp-card-media">
+        {% if e.foto_principal %}
+          <img src="{% miniatura e.foto_principal 720 %}" alt="Fotografía de {{ e.nombre }}" width="640" height="400" loading="lazy" decoding="async">
+        {% else %}
+          <div class="lp-card-ph" aria-hidden="true"><i class="bi bi-image"></i></div>
+        {% endif %}
+        <span class="lp-chip">{{ e.get_tipo_display }}</span>
+      </div>
+      <div class="lp-card-body">
+        <h2 class="h3">{{ e.nombre }}</h2>
+        <ul class="lp-meta"><li><i class="bi bi-people" aria-hidden="true"></i>Hasta {{ e.capacidad }} personas</li></ul>
+        {% if e.descripcion %}<p>{{ e.descripcion|truncatewords:18 }}</p>{% endif %}
+        <div class="lp-card-foot">
+          <div class="lp-price"><strong>Q{{ e.precio_por_evento }}</strong><span>por evento</span></div>
+          <a href="{% url 'reservaciones:solicitar' %}?espacio={{ e.pk }}" class="btn btn-primario btn-sm">Reservar</a>
+        </div>
+      </div>
+    </article>
+  </div>
+  {% empty %}
+  <div class="col-12"><div class="lp-empty"><i class="bi bi-building" aria-hidden="true"></i><strong>No hay canchas o salones disponibles en este momento.</strong></div></div>
+  {% endfor %}
+</div>
+{% include 'partials/paginacion.html' with pagina=page_obj %}
+{% endblock %}

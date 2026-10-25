@@ -1,0 +1,59 @@
+<aside class="sidebar" id="sidebar">
+  <div class="marca">
+    <i class="bi bi-calendar2-check"></i>
+    <span>{{ NOMBRE_SISTEMA }}</span>
+  </div>
+
+  <a href="{% url 'dashboard:inicio' %}" class="nav-link-sidebar {% if app_actual == 'dashboard' %}activo{% endif %}">
+    <i class="bi bi-speedometer2"></i> Dashboard
+  </a>
+
+  <div class="nav-grupo-titulo">Operación</div>
+  <a href="{% url 'clientes:lista' %}" class="nav-link-sidebar {% if app_actual == 'clientes' %}activo{% endif %}">
+    <i class="bi bi-people"></i> Clientes
+  </a>
+  <a href="{% url 'espacios:lista' %}" class="nav-link-sidebar {% if app_actual == 'espacios' %}activo{% endif %}">
+    <i class="bi bi-building"></i> Canchas y salones
+  </a>
+  <a href="{% url 'reservaciones:lista' %}" class="nav-link-sidebar {% if app_actual == 'reservaciones' and ruta_actual != 'calendario' %}activo{% endif %}">
+    <i class="bi bi-journal-check"></i> Reservaciones
+  </a>
+  <a href="{% url 'reservaciones:calendario' %}" class="nav-link-sidebar {% if ruta_actual == 'calendario' %}activo{% endif %}">
+    <i class="bi bi-calendar3"></i> Calendario
+  </a>
+  <a href="{% url 'pagos:lista' %}" class="nav-link-sidebar {% if app_actual == 'pagos' %}activo{% endif %}">
+    <i class="bi bi-credit-card"></i> Pagos
+  </a>
+
+  <div class="nav-grupo-titulo">Fidelización</div>
+  <a href="{% url 'fidelizacion:premios' %}" class="nav-link-sidebar {% if ruta_actual == 'premios' %}activo{% endif %}">
+    <i class="bi bi-gift"></i> Catálogo de premios
+  </a>
+  <a href="{% url 'fidelizacion:canjes' %}" class="nav-link-sidebar {% if ruta_actual == 'canjes' %}activo{% endif %}">
+    <i class="bi bi-arrow-left-right"></i> Canjes
+  </a>
+  <a href="{% url 'fidelizacion:historial' %}" class="nav-link-sidebar {% if ruta_actual == 'historial' %}activo{% endif %}">
+    <i class="bi bi-clock-history"></i> Historial de puntos
+  </a>
+
+  <div class="nav-grupo-titulo">Análisis</div>
+  <a href="{% url 'reportes:menu' %}" class="nav-link-sidebar {% if app_actual == 'reportes' %}activo{% endif %}">
+    <i class="bi bi-file-earmark-bar-graph"></i> Reportes
+  </a>
+
+  {% if user.is_superuser or user.rol.clave == 'ADMINISTRADOR' %}
+  <div class="nav-grupo-titulo">Administración</div>
+  <a href="{% url 'usuarios:lista' %}" class="nav-link-sidebar {% if ruta_actual == 'lista' and app_actual == 'usuarios' %}activo{% endif %}">
+    <i class="bi bi-person-badge"></i> Usuarios
+  </a>
+  <a href="{% url 'usuarios:rol_lista' %}" class="nav-link-sidebar {% if ruta_actual == 'rol_lista' %}activo{% endif %}">
+    <i class="bi bi-shield-lock"></i> Roles y permisos
+  </a>
+  <a href="{% url 'usuarios:bitacora' %}" class="nav-link-sidebar {% if ruta_actual == 'bitacora' %}activo{% endif %}">
+    <i class="bi bi-list-check"></i> Bitácora
+  </a>
+  <a href="{% url 'fidelizacion:configuracion' %}" class="nav-link-sidebar {% if ruta_actual == 'configuracion' %}activo{% endif %}">
+    <i class="bi bi-gear"></i> Configuración
+  </a>
+  {% endif %}
+</aside>

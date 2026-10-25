@@ -1,0 +1,82 @@
+{% extends 'base.html' %}
+{% block titulo_pagina %}{{ cliente.nombre_completo }}{% endblock %}
+{% block contenido %}
+<div class="row g-3">
+  <div class="col-lg-4">
+    <div class="card-elegante p-4 text-center">
+      {% if cliente.foto %}
+        <img src="{{ cliente.foto.url }}" class="rounded-circle mb-3" style="width:96px;height:96px;object-fit:cover;">
+      {% else %}
+        <div class="avatar-circulo mx-auto mb-3" style="width:96px;height:96px;font-size:32px;">{{ cliente.nombres|first|upper }}</div>
+      {% endif %}
+      <h5 style="font-weight:600;">{{ cliente.nombre_completo }}</h5>
+      <p class="text-secondary small mb-1"><i class="bi bi-card-text me-1"></i>{{ cliente.dpi }}</p>
+      <p class="text-secondary small mb-1"><i class="bi bi-telephone me-1"></i>{{ cliente.telefono }}</p>
+      <p class="text-secondary small mb-1"><i class="bi bi-envelope me-1"></i>{{ cliente.correo }}</p>
+      <p class="text-secondary small"><i class="bi bi-geo-alt me-1"></i>{{ cliente.direccion }}</p>
+      <div class="d-flex justify-content-center gap-2 mt-3">
+        <span class="badge-estado badge-confirmada"><i class="bi bi-star-fill me-1"></i>{{ cliente.puntos_disponibles }} puntos</span>
+      </div>
+      <a href="{% url 'clientes:editar' cliente.pk %}" class="btn btn-outline-elegante w-100 mt-3">Editar información</a>
+    </div>
+
+    <div class="card-elegante p-3 mt-3">
+      <h6 class="mb-2" style="font-weight:500;">Canjear premio</h6>
+      {% if premios_disponibles %}
+      <form method="post" action="{% url 'fidelizacion:canjear' cliente.pk %}">
+        {% csrf_token %}
+        <select name="premio" class="form-select mb-2">
+          {% for premio in premios_disponibles %}
+          <option value="{{ premio.pk }}">{{ premio.nombre }} ({{ premio.costo_puntos }} pts)</option>
+          {% endfor %}
+        </select>
+        <button type="submit" class="btn btn-primario w-100 btn-sm">Canjear</button>
+      </form>
+      {% else %}
+      <p class="text-secondary small">Sin premios disponibles con los puntos actuales.</p>
+      {% endif %}
+      <a href="{% url 'fidelizacion:premios' %}" class="small d-block mt-2">Ver catálogo completo de premios →</a>
+    </div>
+  </div>
+
+  <div class="col-lg-8">
+    <div class="card-elegante p-3 mb-3">
+      <h6 class="mb-3" style="font-weight:500;">Historial de reservaciones</h6>
+      <table class="tabla-elegante">
+        <thead><tr><th>Espacio</th><th>Fecha</th><th>Estado</th><th>Precio</th></tr></thead>
+        <tbody>
+          {% for r in reservaciones %}
+          <tr>
+            <td><a href="{% url 'reservaciones:detalle' r.pk %}">{{ r.espacio.nombre }}</a></td>
+            <td>{{ r.fecha_inicio|date:"d/m/Y H:i" }}</td>
+            <td><span class="badge-estado badge-{{ r.estado|lower }}">{{ r.get_estado_display }}</span></td>
+            <td>Q{{ r.precio_total }}</td>
+          </tr>
+          {% empty %}
+          <tr><td colspan="4" class="text-center text-secondary py-3">Sin reservaciones registradas.</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
+    <div class="card-elegante p-3">
+      <h6 class="mb-3" style="font-weight:500;">Movimientos de puntos</h6>
+      <table class="tabla-elegante">
+        <thead><tr><th>Tipo</th><th>Puntos</th><th>Fecha</th><th>Descripción</th></tr></thead>
+        <tbody>
+          {% for m in movimientos_puntos %}
+          <tr>
+            <td>{{ m.get_tipo_display }}</td>
+            <td class="{% if m.puntos < 0 %}text-danger{% else %}text-success{% endif %}">{{ m.puntos }}</td>
+            <td>{{ m.fecha|date:"d/m/Y" }}</td>
+            <td>{{ m.descripcion }}</td>
+          </tr>
+          {% empty %}
+          <tr><td colspan="4" class="text-center text-secondary py-3">Sin movimientos registrados.</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+{% endblock %}

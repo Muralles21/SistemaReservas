@@ -1,0 +1,7 @@
+{% extends "correos/base_correo.html" %}
+{% block cuerpo %}
+<p>Hola <strong>{{ cliente.nombres }}</strong>,</p>
+<p>No pudimos completar el pago de tu reservación #{{ r.pk }}{% if motivo %} ({{ motivo }}){% endif %}, por lo que el horario fue liberado.</p>
+<p>Puedes intentarlo de nuevo cuando quieras.</p>
+<p><a class="btn" href="{{ SITE_URL }}/reservaciones/solicitar/">Intentar otra vez</a></p>
+{% endblock %}

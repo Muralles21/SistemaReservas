@@ -1,0 +1,41 @@
+[
+  {
+    "model": "usuarios.rol",
+    "pk": 1,
+    "fields": {
+      "fecha_creacion": "2026-01-01T00:00:00Z",
+      "fecha_modificacion": "2026-01-01T00:00:00Z",
+      "activo": true,
+      "nombre": "Administrador",
+      "clave": "ADMINISTRADOR",
+      "descripcion": "Acceso total al sistema, incluida la configuración y administración de usuarios.",
+      "permisos": []
+    }
+  },
+  {
+    "model": "usuarios.rol",
+    "pk": 2,
+    "fields": {
+      "fecha_creacion": "2026-01-01T00:00:00Z",
+      "fecha_modificacion": "2026-01-01T00:00:00Z",
+      "activo": true,
+      "nombre": "Recepción",
+      "clave": "RECEPCION",
+      "descripcion": "Gestiona clientes, espacios y reservaciones.",
+      "permisos": []
+    }
+  },
+  {
+    "model": "usuarios.rol",
+    "pk": 3,
+    "fields": {
+      "fecha_creacion": "2026-01-01T00:00:00Z",
+      "fecha_modificacion": "2026-01-01T00:00:00Z",
+      "activo": true,
+      "nombre": "Cajero",
+      "clave": "CAJERO",
+      "descripcion": "Gestiona el registro de pagos.",
+      "permisos": []
+    }
+  }
+]

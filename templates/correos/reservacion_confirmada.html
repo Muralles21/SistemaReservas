@@ -1,0 +1,9 @@
+{% extends "correos/base_correo.html" %}
+{% block cuerpo %}
+<p>Hola <strong>{{ cliente.nombres }}</strong>,</p>
+<p>¡Tu reservación está <strong>confirmada</strong>!</p>
+{% include "correos/_resumen.html" %}
+{% if pago %}<p>Pago recibido: <strong>Q{{ pago.monto|floatformat:"2u" }}</strong> con tarjeta. Gracias.</p>{% endif %}
+<p>Recuerda llegar unos minutos antes de tu horario. Al finalizar tu reservación acumularás puntos de fidelización canjeables por premios.</p>
+<p><a class="btn" href="{{ SITE_URL }}/clientes/mi-cuenta/">Ver mi cuenta</a></p>
+{% endblock %}

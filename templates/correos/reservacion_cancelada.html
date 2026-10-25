@@ -1,0 +1,9 @@
+{% extends "correos/base_correo.html" %}
+{% block cuerpo %}
+<p>Hola <strong>{{ cliente.nombres }}</strong>,</p>
+<p>{% if por_cliente %}Cancelaste tu reservación.{% else %}Tu reservación fue cancelada.{% endif %}</p>
+{% include "correos/_resumen.html" %}
+{% if motivo %}<p>Motivo: {{ motivo }}</p>{% endif %}
+<p>Cuando quieras, puedes hacer una nueva reservación desde tu cuenta.</p>
+<p><a class="btn" href="{{ SITE_URL }}/reservaciones/solicitar/">Reservar de nuevo</a></p>
+{% endblock %}

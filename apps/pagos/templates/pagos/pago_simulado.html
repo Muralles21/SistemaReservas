@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+{% block titulo_pagina %}Pago con tarjeta (demostración){% endblock %}
+{% block contenido %}
+<div class="card-elegante p-4" style="max-width:520px;">
+  <div class="alert alert-warning" style="border-radius:10px;">
+    <i class="bi bi-exclamation-triangle me-1"></i> <strong>Pasarela simulada.</strong>
+    Esta pantalla reemplaza a la de la pasarela real y no cobra dinero. No escribas datos de tarjeta.
+  </div>
+  <h6 style="font-weight:600;">Reservación #{{ pago.reservacion.pk }} · {{ pago.reservacion.espacio.nombre }}</h6>
+  <p class="text-secondary mb-1">{{ pago.reservacion.fecha_inicio|date:"d/m/Y H:i" }} – {{ pago.reservacion.fecha_fin|date:"H:i" }}</p>
+  <p class="mb-4" style="font-size:1.4rem;font-weight:600;">Total: Q{{ pago.monto }}</p>
+  <div class="d-flex gap-2">
+    <a class="btn btn-primario" href="{% url 'pagos:retorno' pago.pk %}?sim={{ token }}">Simular pago aprobado</a>
+    <a class="btn btn-outline-elegante" href="{% url 'pagos:cancelado' pago.pk %}">Cancelar</a>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,8 @@
+{% extends "correos/base_correo.html" %}
+{% block cuerpo %}
+<p>Un cliente hizo una nueva reservación.</p>
+<table class="tabla"><tr><td>Cliente</td><td>{{ cliente.nombre_completo }} · {{ cliente.telefono }}</td></tr></table>
+{% include "correos/_resumen.html" %}
+{% if pago %}<div class="aviso">Pagada con tarjeta (Q{{ pago.monto|floatformat:"2u" }}): confirmada automáticamente.</div>{% else %}<div class="aviso">Pendiente de confirmación al recibir el pago.</div>{% endif %}
+<p><a class="btn" href="{{ SITE_URL }}/reservaciones/{{ r.pk }}/">Abrir reservación</a></p>
+{% endblock %}

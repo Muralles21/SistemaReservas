@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+{% block contenido_publico %}
+<div class="login-shell">
+  <div class="login-card text-center">
+    {% include 'partials/auth_marca.html' %}
+    <i class="bi bi-envelope-check" style="font-size:32px;color:#0F6E56;"></i>
+    <h5 class="mt-2" style="font-weight:600;">Revisa tu correo</h5>
+    <p class="text-secondary small">Si el correo existe en el sistema, recibirás un enlace para restablecer tu contraseña.</p>
+    <a href="{% url 'autenticacion:login' %}" class="btn btn-outline-elegante w-100 mt-2">Volver al inicio de sesión</a>
+  </div>
+</div>
+{% endblock %}

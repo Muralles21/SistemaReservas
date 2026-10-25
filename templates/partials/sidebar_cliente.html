@@ -1,0 +1,23 @@
+{% load static %}
+<aside class="sidebar" id="sidebar" aria-label="Navegación principal">
+  <a class="marca" href="{% url 'core:inicio' %}">
+    <img src="{% static 'img/logo.svg' %}" alt="" width="38" height="38">
+    <span>{{ NOMBRE_SISTEMA }}</span>
+  </a>
+
+  <a href="{% url 'clientes:mi_cuenta' %}" class="nav-link-sidebar {% if ruta_actual == 'mi_cuenta' %}activo{% endif %}" {% if ruta_actual == 'mi_cuenta' %}aria-current="page"{% endif %}>
+    <i class="bi bi-person-circle" aria-hidden="true"></i> Mi cuenta
+  </a>
+  <a href="{% url 'core:catalogo' %}" class="nav-link-sidebar {% if ruta_actual == 'catalogo' %}activo{% endif %}" {% if ruta_actual == 'catalogo' %}aria-current="page"{% endif %}>
+    <i class="bi bi-grid" aria-hidden="true"></i> Canchas y salones
+  </a>
+  <a href="{% url 'reservaciones:calendario' %}" class="nav-link-sidebar {% if ruta_actual == 'calendario' %}activo{% endif %}" {% if ruta_actual == 'calendario' %}aria-current="page"{% endif %}>
+    <i class="bi bi-calendar3" aria-hidden="true"></i> Ver disponibilidad
+  </a>
+  <a href="{% url 'reservaciones:solicitar' %}" class="nav-link-sidebar {% if ruta_actual == 'solicitar' %}activo{% endif %}" {% if ruta_actual == 'solicitar' %}aria-current="page"{% endif %}>
+    <i class="bi bi-calendar-plus" aria-hidden="true"></i> Solicitar reservación
+  </a>
+  <a href="{% url 'autenticacion:cambiar_password' %}" class="nav-link-sidebar {% if ruta_actual == 'cambiar_password' %}activo{% endif %}" {% if ruta_actual == 'cambiar_password' %}aria-current="page"{% endif %}>
+    <i class="bi bi-key" aria-hidden="true"></i> Cambiar contraseña
+  </a>
+</aside>

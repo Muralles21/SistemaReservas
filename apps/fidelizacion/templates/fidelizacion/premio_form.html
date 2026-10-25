@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+{% block titulo_pagina %}{% if object %}Editar premio{% else %}Nuevo premio{% endif %}{% endblock %}
+{% block contenido %}
+<div class="card-elegante p-4" style="max-width:520px;">
+  <form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    <div class="mb-3"><label class="form-label">Nombre</label>{{ form.nombre }}</div>
+    <div class="mb-3"><label class="form-label">Descripción</label>{{ form.descripcion }}</div>
+    <div class="mb-3"><label class="form-label">Costo en puntos</label>{{ form.costo_puntos }}</div>
+    <div class="mb-3"><label class="form-label">Stock disponible</label>{{ form.stock }}</div>
+    <div class="mb-3"><label class="form-label">Fotografía</label>{{ form.foto }}</div>
+    <button class="btn btn-primario">Guardar</button>
+    <a href="{% url 'fidelizacion:premios' %}" class="btn btn-outline-elegante">Cancelar</a>
+  </form>
+</div>
+{% endblock %}

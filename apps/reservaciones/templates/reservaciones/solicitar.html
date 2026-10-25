@@ -1,0 +1,263 @@
+{% extends 'base.html' %}
+{% load static assets imagenes %}
+{% block titulo_pagina %}Solicitar reservación{% endblock %}
+{% block extra_css %}<link rel="stylesheet" href="{% static_v 'css/reservar.css' %}">{% endblock %}
+{% block contenido %}
+<div class="res-grid">
+
+  <!-- ===== Formulario ===== -->
+  <div class="card-elegante p-4">
+    {% if form.non_field_errors %}
+    <div class="alert alert-danger" style="border-radius:10px;" role="alert">{{ form.non_field_errors }}</div>
+    {% endif %}
+    <form method="post" novalidate id="formSolicitud">
+      {% csrf_token %}
+
+      <fieldset class="mb-4">
+        <legend class="form-label fs-6 mb-2" style="font-weight:600;">1. Elige tu cancha o salón</legend>
+        {% if form.espacio.errors %}<div class="text-danger small mb-2">{{ form.espacio.errors|join:", " }}</div>{% endif %}
+        <div class="esp-lista">
+          {% for e in espacios %}
+          <div class="esp-opcion">
+            <input type="radio" name="espacio" id="esp-{{ e.pk }}" value="{{ e.pk }}"
+                   {% if form.espacio.value|stringformat:"s" == e.pk|stringformat:"s" %}checked{% endif %}
+                   data-nombre="{{ e.nombre }}">
+            <label for="esp-{{ e.pk }}">
+              {% if e.foto_principal %}
+                <img class="esp-foto" src="{% miniatura e.foto_principal 160 %}" alt="" width="56" height="56" loading="lazy">
+              {% else %}
+                <span class="esp-foto" aria-hidden="true"><i class="bi bi-image"></i></span>
+              {% endif %}
+              <span class="esp-info">
+                <strong>{{ e.nombre }}</strong>
+                <small>{{ e.get_tipo_display }} · hasta {{ e.capacidad }} personas</small>
+                <span class="precio">Q{{ e.precio_por_evento|floatformat:"2u" }} por evento</span>
+              </span>
+            </label>
+          </div>
+          {% empty %}
+          <p class="text-secondary mb-0">No hay canchas o salones disponibles por el momento.</p>
+          {% endfor %}
+        </div>
+      </fieldset>
+
+      <fieldset class="mb-4">
+        <legend class="form-label fs-6 mb-2" style="font-weight:600;">2. Fecha y horario</legend>
+        <p class="text-secondary small mb-2">Toca un día del calendario para ver qué horarios están ocupados.</p>
+        <div class="row g-3">
+          <div class="col-md-6">
+            <label class="form-label" for="{{ form.fecha_inicio.id_for_label }}">Inicio</label>
+            {{ form.fecha_inicio }}
+            {% if form.fecha_inicio.errors %}<div class="text-danger small">{{ form.fecha_inicio.errors|join:", " }}</div>{% endif %}
+          </div>
+          <div class="col-md-6">
+            <label class="form-label" for="{{ form.fecha_fin.id_for_label }}">Fin</label>
+            {{ form.fecha_fin }}
+            {% if form.fecha_fin.errors %}<div class="text-danger small">{{ form.fecha_fin.errors|join:", " }}</div>{% endif %}
+          </div>
+        </div>
+        <div class="aviso-choque" id="avisoChoque" role="alert"></div>
+        <div class="mt-3">
+          <label class="form-label" for="{{ form.observaciones.id_for_label }}">Observaciones</label>
+          {{ form.observaciones }}
+        </div>
+      </fieldset>
+
+      <fieldset class="mb-2">
+        <legend class="form-label fs-6 mb-2" style="font-weight:600;">3. Método de pago</legend>
+        <div class="d-flex flex-column gap-2 mb-2">
+          {% for radio in form.metodo_pago %}
+          <label class="d-flex align-items-start gap-2" style="cursor:pointer;">
+            {{ radio.tag }}
+            <span class="small">{{ radio.choice_label }}</span>
+          </label>
+          {% endfor %}
+        </div>
+        <p class="text-secondary small mb-0" id="notaTarjeta">
+          <i class="bi bi-shield-lock me-1" aria-hidden="true"></i>
+          Al continuar te llevaremos a la página segura de pago. Nosotros no vemos ni guardamos los datos de tu tarjeta.
+          {% if pasarela_simulada %}<strong class="d-block mt-1" style="color:var(--warm);">Modo demostración: el pago es simulado y no se cobra dinero.</strong>{% endif %}
+        </p>
+        <p class="text-secondary small mb-0" id="notaEfectivo" style="display:none;">
+          Tu solicitud quedará <strong>pendiente</strong> hasta que el personal confirme el pago en efectivo. Te avisaremos por correo.
+        </p>
+      </fieldset>
+
+      <div class="mt-3 d-flex gap-2">
+        <button type="submit" class="btn btn-primario" id="btnEnviar">Continuar</button>
+        <a href="{% url 'clientes:mi_cuenta' %}" class="btn btn-outline-elegante">Cancelar</a>
+      </div>
+    </form>
+  </div>
+
+  <!-- ===== Disponibilidad ===== -->
+  <aside class="card-elegante p-4 res-lado" aria-labelledby="tituloDisp">
+    <h2 class="h6 mb-1" id="tituloDisp" style="font-weight:600;">Disponibilidad</h2>
+    <p class="text-secondary small mb-3" id="dispEspacio">Elige una cancha o salón para ver su calendario.</p>
+    <div class="mini-cal" id="miniCal" hidden>
+      <div class="mini-cal-cab">
+        <button type="button" id="calPrev" aria-label="Mes anterior"><i class="bi bi-chevron-left" aria-hidden="true"></i></button>
+        <h3 id="calTitulo" aria-live="polite"></h3>
+        <button type="button" id="calNext" aria-label="Mes siguiente"><i class="bi bi-chevron-right" aria-hidden="true"></i></button>
+      </div>
+      <div class="mini-cal-sem" aria-hidden="true"><span>L</span><span>M</span><span>M</span><span>J</span><span>V</span><span>S</span><span>D</span></div>
+      <div class="mini-cal-dias" id="calDias" role="group" aria-label="Días del mes"></div>
+      <div class="mini-cal-leyenda">
+        <span><i style="background:var(--warm)"></i>Con reservas</span>
+        <span><i style="background:var(--danger)"></i>Casi todo el día ocupado</span>
+        <span><i style="border:1px solid rgba(255,255,255,.6)"></i>Hoy</span>
+      </div>
+      <div class="dia-detalle" id="diaDetalle" aria-live="polite"></div>
+    </div>
+  </aside>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+(function () {
+  var URL_DISP = "{% url 'reservaciones:disponibilidad_json' %}";
+  var MESES = ['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
+  var DIAS = ['domingo','lunes','martes','miércoles','jueves','viernes','sábado'];
+  var inicio = document.getElementById('{{ form.fecha_inicio.id_for_label }}');
+  var fin = document.getElementById('{{ form.fecha_fin.id_for_label }}');
+  var aviso = document.getElementById('avisoChoque');
+  var cal = document.getElementById('miniCal'), dias = document.getElementById('calDias');
+  var titulo = document.getElementById('calTitulo'), detalle = document.getElementById('diaDetalle');
+  var etiquetaEsp = document.getElementById('dispEspacio');
+  var hoy = new Date(); hoy.setHours(0,0,0,0);
+  var estado = { espacio: null, nombre: '', mes: new Date(hoy.getFullYear(), hoy.getMonth(), 1), datos: {}, sel: null };
+
+  function pad(n) { return (n < 10 ? '0' : '') + n; }
+  function iso(d) { return d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate()); }
+  function clave(m) { return m.getFullYear() + '-' + pad(m.getMonth() + 1); }
+  function aMin(hhmm) { var p = hhmm.split(':'); return +p[0] * 60 + +p[1]; }
+
+  function cargar() {
+    if (!estado.espacio) return Promise.resolve();
+    var k = estado.espacio + '|' + clave(estado.mes);
+    if (estado.datos[k]) return Promise.resolve();
+    return fetch(URL_DISP + '?espacio=' + estado.espacio + '&mes=' + clave(estado.mes), { credentials: 'same-origin' })
+      .then(function (r) { return r.json(); })
+      .then(function (j) { estado.datos[k] = j.dias || {}; })
+      .catch(function () { estado.datos[k] = {}; });
+  }
+  function franjas(fechaIso) {
+    var d = new Date(fechaIso + 'T00:00:00');
+    var k = estado.espacio + '|' + clave(new Date(d.getFullYear(), d.getMonth(), 1));
+    return (estado.datos[k] || {})[fechaIso] || [];
+  }
+
+  function pintar() {
+    titulo.textContent = MESES[estado.mes.getMonth()] + ' ' + estado.mes.getFullYear();
+    document.getElementById('calPrev').disabled = estado.mes <= new Date(hoy.getFullYear(), hoy.getMonth(), 1);
+    dias.innerHTML = '';
+    var primero = new Date(estado.mes.getFullYear(), estado.mes.getMonth(), 1);
+    var offset = (primero.getDay() + 6) % 7;
+    for (var i = 0; i < offset; i++) { var v = document.createElement('span'); v.className = 'vacio'; dias.appendChild(v); }
+    var total = new Date(estado.mes.getFullYear(), estado.mes.getMonth() + 1, 0).getDate();
+    for (var n = 1; n <= total; n++) {
+      var f = new Date(estado.mes.getFullYear(), estado.mes.getMonth(), n);
+      var fi = iso(f), fr = franjas(fi), b = document.createElement('button');
+      b.type = 'button'; b.textContent = n; b.dataset.fecha = fi;
+      var minutos = fr.reduce(function (a, x) { return a + (aMin(x.fin) - aMin(x.inicio)); }, 0);
+      if (fr.length) b.classList.add('ocupado');
+      if (minutos >= 12 * 60) b.classList.add('lleno');
+      if (f < hoy) b.disabled = true;
+      if (f.getTime() === hoy.getTime()) b.classList.add('hoy');
+      if (estado.sel === fi) b.classList.add('sel');
+      b.setAttribute('aria-label', f.getDate() + ' de ' + MESES[f.getMonth()] + (fr.length ? ', con ' + fr.length + ' reserva(s)' : ', sin reservas'));
+      b.addEventListener('click', (function (fecha) { return function () { elegirDia(fecha); }; })(fi));
+      dias.appendChild(b);
+    }
+    mostrarDetalle();
+  }
+
+  function mostrarDetalle() {
+    if (!estado.sel) { detalle.innerHTML = '<span class="text-secondary">Toca un día para ver sus horarios.</span>'; return; }
+    var d = new Date(estado.sel + 'T00:00:00'), fr = franjas(estado.sel);
+    var html = '<h4>' + DIAS[d.getDay()].charAt(0).toUpperCase() + DIAS[d.getDay()].slice(1) + ' ' + d.getDate() + ' de ' + MESES[d.getMonth()] + '</h4>';
+    if (!fr.length) html += '<p class="libre-msg mb-0"><i class="bi bi-check-circle me-1" aria-hidden="true"></i>Sin reservas: todo el horario está libre.</p>';
+    else {
+      html += '<p class="mb-2 text-secondary">Horarios ocupados:</p>';
+      fr.forEach(function (x) { html += '<span class="franja"><i class="bi bi-clock" aria-hidden="true"></i>' + x.inicio + ' – ' + x.fin + '</span>'; });
+      html += '<p class="small text-secondary mt-1 mb-0">Fuera de esas franjas el espacio está libre.</p>';
+    }
+    detalle.innerHTML = html;
+  }
+
+  function fijarFecha(campo, fecha, horaPorDefecto) {
+    var actual = campo.value || '';
+    var hora = actual.indexOf('T') > -1 ? actual.split('T')[1] : horaPorDefecto;
+    campo.value = fecha + 'T' + hora;
+  }
+  function elegirDia(fecha) {
+    estado.sel = fecha;
+    fijarFecha(inicio, fecha, '08:00');
+    fijarFecha(fin, fecha, '10:00');
+    pintar(); revisarChoque();
+  }
+
+  function revisarChoque() {
+    aviso.classList.remove('activo'); aviso.textContent = '';
+    if (!estado.espacio || !inicio.value || !fin.value) return;
+    var a = new Date(inicio.value), b = new Date(fin.value);
+    if (isNaN(a) || isNaN(b)) return;
+    if (b <= a) { aviso.textContent = 'La hora de fin debe ser posterior a la de inicio.'; aviso.classList.add('activo'); return; }
+    var dia = new Date(a.getFullYear(), a.getMonth(), a.getDate()), choques = [];
+    while (dia <= b) {
+      franjas(iso(dia)).forEach(function (x) {
+        var ini = new Date(dia.getTime() + aMin(x.inicio) * 60000), f2 = new Date(dia.getTime() + aMin(x.fin) * 60000);
+        if (a < f2 && b > ini) choques.push(iso(dia).split('-').reverse().join('/') + ' ' + x.inicio + '–' + x.fin);
+      });
+      dia.setDate(dia.getDate() + 1);
+    }
+    if (choques.length) {
+      aviso.textContent = 'Ese horario se cruza con una reserva existente (' + choques.join(', ') + '). Elige otro horario.';
+      aviso.classList.add('activo');
+    }
+  }
+
+  function elegirEspacio(radio) {
+    estado.espacio = radio.value; estado.nombre = radio.dataset.nombre; estado.datos = {};
+    etiquetaEsp.textContent = estado.nombre;
+    cal.hidden = false;
+    var ref = inicio.value ? new Date(inicio.value) : hoy;
+    if (!isNaN(ref) && ref >= hoy) { estado.mes = new Date(ref.getFullYear(), ref.getMonth(), 1); estado.sel = iso(ref); }
+    cargar().then(function () { pintar(); revisarChoque(); });
+  }
+
+  document.querySelectorAll('input[name="espacio"]').forEach(function (r) {
+    r.addEventListener('change', function () { elegirEspacio(r); });
+  });
+  document.getElementById('calPrev').addEventListener('click', function () {
+    estado.mes = new Date(estado.mes.getFullYear(), estado.mes.getMonth() - 1, 1); cargar().then(pintar);
+  });
+  document.getElementById('calNext').addEventListener('click', function () {
+    estado.mes = new Date(estado.mes.getFullYear(), estado.mes.getMonth() + 1, 1); cargar().then(pintar);
+  });
+  [inicio, fin].forEach(function (c) { c.addEventListener('change', function () {
+    if (c === inicio && inicio.value && (!fin.value || new Date(fin.value) <= new Date(inicio.value))) {
+      var d = new Date(new Date(inicio.value).getTime() + 2 * 3600000);
+      fin.value = iso(d) + 'T' + pad(d.getHours()) + ':' + pad(d.getMinutes());
+    }
+    if (inicio.value) { var f = inicio.value.split('T')[0]; if (f !== estado.sel) { estado.sel = f; var d2 = new Date(f + 'T00:00:00'); estado.mes = new Date(d2.getFullYear(), d2.getMonth(), 1); cargar().then(function () { pintar(); revisarChoque(); }); return; } }
+    revisarChoque();
+  }); });
+
+  // Método de pago: textos y etiqueta del botón
+  function actualizarPago() {
+    var sel = document.querySelector('input[name="metodo_pago"]:checked');
+    var tarjeta = !sel || sel.value === 'TARJETA';
+    document.getElementById('notaTarjeta').style.display = tarjeta ? '' : 'none';
+    document.getElementById('notaEfectivo').style.display = tarjeta ? 'none' : '';
+    document.getElementById('btnEnviar').textContent = tarjeta ? 'Continuar al pago seguro' : 'Enviar solicitud';
+  }
+  document.querySelectorAll('input[name="metodo_pago"]').forEach(function (r) { r.addEventListener('change', actualizarPago); });
+  actualizarPago();
+
+  var marcado = document.querySelector('input[name="espacio"]:checked');
+  if (marcado) elegirEspacio(marcado);
+})();
+</script>
+{% endblock %}

@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+{% block titulo_pagina %}Usuarios{% endblock %}
+{% block contenido %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <form method="get" class="d-flex"><input type="text" name="q" class="form-control" placeholder="Buscar usuario" value="{{ request.GET.q|default:'' }}"></form>
+  <a href="{% url 'usuarios:crear' %}" class="btn btn-primario"><i class="bi bi-plus-lg me-1"></i>Nuevo usuario</a>
+</div>
+<div class="card-elegante p-3">
+  <table class="tabla-elegante">
+    <thead><tr><th>Usuario</th><th>Nombre</th><th>Rol</th><th>Estado</th><th></th></tr></thead>
+    <tbody>
+      {% for u in usuarios %}
+      <tr>
+        <td>{{ u.username }}</td>
+        <td>{{ u.get_full_name }}</td>
+        <td>{{ u.rol.nombre|default:"—" }}</td>
+        <td>
+          {% if u.esta_bloqueado %}
+            <span class="badge-estado badge-cancelada">Bloqueado</span>
+          {% elif u.is_active %}
+            <span class="badge-estado badge-confirmada">Activo</span>
+          {% else %}
+            <span class="badge-estado badge-pendiente">Inactivo</span>
+          {% endif %}
+        </td>
+        <td class="text-end">
+          {% if u.esta_bloqueado %}
+          <form method="post" action="{% url 'usuarios:desbloquear' u.pk %}" class="d-inline">
+            {% csrf_token %}<button class="btn btn-sm btn-outline-elegante"><i class="bi bi-unlock"></i></button>
+          </form>
+          {% endif %}
+          <a href="{% url 'usuarios:editar' u.pk %}" class="btn btn-sm btn-outline-elegante"><i class="bi bi-pencil"></i></a>
+          <a href="{% url 'usuarios:eliminar' u.pk %}" class="btn btn-sm btn-outline-elegante text-danger"><i class="bi bi-trash"></i></a>
+        </td>
+      </tr>
+      {% empty %}
+      <tr><td colspan="5" class="text-center text-secondary py-4">No hay usuarios registrados.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% include 'partials/paginacion.html' with pagina=page_obj %}
+{% endblock %}

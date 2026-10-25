@@ -1,0 +1,126 @@
+{% extends 'base.html' %}
+{% block titulo %}Dashboard · {{ NOMBRE_SISTEMA }}{% endblock %}
+{% block titulo_pagina %}Dashboard{% endblock %}
+{% block extra_css %}<style>.grafica-caja{position:relative;height:270px}</style>{% endblock %}
+{% block contenido %}
+
+<div class="row g-3 mb-4">
+  <div class="col-6 col-lg-3">
+    <div class="kpi-card d-flex align-items-center justify-content-between">
+      <div>
+        <div class="kpi-valor">{{ total_clientes }}</div>
+        <div class="kpi-etiqueta">Clientes activos</div>
+      </div>
+      <div class="kpi-icono"><i class="bi bi-people"></i></div>
+    </div>
+  </div>
+  <div class="col-6 col-lg-3">
+    <div class="kpi-card d-flex align-items-center justify-content-between">
+      <div>
+        <div class="kpi-valor">{{ total_espacios }}</div>
+        <div class="kpi-etiqueta">Espacios y salones</div>
+      </div>
+      <div class="kpi-icono"><i class="bi bi-building"></i></div>
+    </div>
+  </div>
+  <div class="col-6 col-lg-3">
+    <div class="kpi-card d-flex align-items-center justify-content-between">
+      <div>
+        <div class="kpi-valor">{{ reservaciones_mes }}</div>
+        <div class="kpi-etiqueta">Reservaciones del mes</div>
+      </div>
+      <div class="kpi-icono"><i class="bi bi-journal-check"></i></div>
+    </div>
+  </div>
+  <div class="col-6 col-lg-3">
+    <div class="kpi-card d-flex align-items-center justify-content-between">
+      <div>
+        <div class="kpi-valor">Q{{ ingresos_mes }}</div>
+        <div class="kpi-etiqueta">Ingresos del mes</div>
+      </div>
+      <div class="kpi-icono"><i class="bi bi-cash-coin"></i></div>
+    </div>
+  </div>
+</div>
+
+<div class="row g-3 mb-4">
+  <div class="col-lg-4">
+    <div class="card-elegante p-3">
+      <h6 class="mb-3" style="font-weight:500;">Espacios más reservados</h6>
+      <div class="grafica-caja"><canvas id="graficaEspacios"></canvas></div>
+    </div>
+  </div>
+  <div class="col-lg-4">
+    <div class="card-elegante p-3">
+      <h6 class="mb-3" style="font-weight:500;">Clientes frecuentes</h6>
+      <div class="grafica-caja"><canvas id="graficaClientes"></canvas></div>
+    </div>
+  </div>
+  <div class="col-lg-4">
+    <div class="card-elegante p-3">
+      <h6 class="mb-3" style="font-weight:500;">Ventas (últimos meses)</h6>
+      <div class="grafica-caja"><canvas id="graficaVentas"></canvas></div>
+    </div>
+  </div>
+</div>
+
+<div class="card-elegante p-3">
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h6 class="mb-0" style="font-weight:500;">Próximas reservaciones</h6>
+    <a href="{% url 'reservaciones:calendario' %}" class="small text-decoration-none">Ver calendario</a>
+  </div>
+  <table class="tabla-elegante">
+    <thead><tr><th>Espacio</th><th>Cliente</th><th>Fecha</th><th>Estado</th></tr></thead>
+    <tbody>
+      {% for r in proximas_reservaciones %}
+      <tr>
+        <td>{{ r.espacio.nombre }}</td>
+        <td>{{ r.cliente.nombre_completo }}</td>
+        <td>{{ r.fecha_inicio|date:"d/m/Y H:i" }}</td>
+        <td><span class="badge-estado badge-{{ r.estado|lower }}">{{ r.get_estado_display }}</span></td>
+      </tr>
+      {% empty %}
+      <tr><td colspan="4" class="text-center text-secondary py-4">No hay reservaciones próximas.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+<script>
+// Estilo global de las graficas para el tema oscuro / glass
+Chart.defaults.color = 'rgba(238,245,241,.82)';
+Chart.defaults.font.family = "'Inter', system-ui, sans-serif";
+Chart.defaults.borderColor = 'rgba(255,255,255,.10)';
+Chart.defaults.plugins.tooltip.backgroundColor = 'rgba(6,16,12,.92)';
+Chart.defaults.plugins.tooltip.borderColor = 'rgba(255,255,255,.2)';
+Chart.defaults.plugins.tooltip.borderWidth = 1;
+Chart.defaults.plugins.tooltip.padding = 10;
+
+fetch("{% url 'dashboard:datos_graficas' %}").then(r => r.json()).then(datos => {
+  const paleta = ['#34D399','#38BDF8','#F7B84B','#A78BFA','#FB7185','#2DD4BF'];
+  const sinDatos = (g) => !g.labels.length;
+
+  new Chart(document.getElementById('graficaEspacios'), {
+    type: 'bar',
+    data: { labels: datos.espacios_top.labels, datasets: [{ data: datos.espacios_top.valores, backgroundColor: paleta, borderRadius: 8, borderSkipped: false }]},
+    options: { plugins: { legend: { display: false } }, responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: true, ticks: { precision: 0 } }, x: { grid: { display: false } } } }
+  });
+
+  new Chart(document.getElementById('graficaClientes'), {
+    type: 'doughnut',
+    data: { labels: datos.clientes_frecuentes.labels, datasets: [{ data: datos.clientes_frecuentes.valores, backgroundColor: paleta, borderColor: 'rgba(6,16,12,.9)', borderWidth: 3 }]},
+    options: { responsive: true, maintainAspectRatio: false, cutout: '62%', plugins: { legend: { position: 'bottom', labels: { boxWidth: 12, usePointStyle: true } } } }
+  });
+
+  new Chart(document.getElementById('graficaVentas'), {
+    type: 'line',
+    data: { labels: datos.ventas_mensuales.labels, datasets: [{ label: 'Ventas', data: datos.ventas_mensuales.valores, borderColor: '#34D399', backgroundColor: 'rgba(52,211,153,.18)', pointBackgroundColor: '#34D399', pointRadius: 4, tension: 0.35, fill: true }]},
+    options: { plugins: { legend: { display: false } }, responsive: true, maintainAspectRatio: false, scales: { x: { grid: { display: false } } } }
+  });
+});
+</script>
+{% endblock %}

@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+{% block titulo_pagina %}Verificando tu pago{% endblock %}
+{% block extra_css %}<meta http-equiv="refresh" content="6">{% endblock %}
+{% block contenido %}
+<div class="card-elegante p-4 text-center" style="max-width:520px;">
+  <div class="spinner-border mb-3" role="status" aria-hidden="true"></div>
+  <h2 class="h5">Estamos verificando tu pago…</h2>
+  <p class="text-secondary mb-3">Esto toma unos segundos. Esta página se actualiza sola; no la cierres ni pagues de nuevo.
+    Si ya pagaste, recibirás un correo cuando se confirme la reservación.</p>
+  <a class="btn btn-outline-elegante" href="{% url 'clientes:mi_cuenta' %}">Ir a mi cuenta</a>
+</div>
+{% endblock %}

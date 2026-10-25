@@ -1,0 +1,10 @@
+{% extends 'base.html' %}
+{% block contenido %}
+<div class="card-elegante p-4" style="max-width:480px;">
+  <h6 style="font-weight:500;">¿Eliminar al usuario {{ object }}?</h6>
+  <form method="post">{% csrf_token %}
+    <button class="btn btn-danger">Confirmar</button>
+    <a href="{% url 'usuarios:lista' %}" class="btn btn-outline-elegante">Cancelar</a>
+  </form>
+</div>
+{% endblock %}

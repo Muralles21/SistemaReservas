@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+{% block titulo_pagina %}Reportes{% endblock %}
+{% block contenido %}
+<div class="row g-3">
+  {% for url_name, icono, titulo, descripcion in reportes %}
+  {% endfor %}
+  <div class="col-md-4"><div class="card-elegante p-4">
+    <i class="bi bi-people" style="font-size:22px;color:#0F6E56;"></i>
+    <h6 class="mt-2" style="font-weight:500;">Clientes</h6>
+    <p class="text-secondary small">Listado completo de clientes activos con sus puntos.</p>
+    <a href="{% url 'reportes:clientes' %}" class="btn btn-outline-elegante btn-sm"><i class="bi bi-file-earmark-pdf me-1"></i>Descargar PDF</a>
+  </div></div>
+  <div class="col-md-4"><div class="card-elegante p-4">
+    <i class="bi bi-journal-check" style="font-size:22px;color:#0F6E56;"></i>
+    <h6 class="mt-2" style="font-weight:500;">Reservaciones</h6>
+    <p class="text-secondary small">Historial de reservaciones con su estado actual.</p>
+    <a href="{% url 'reportes:reservaciones' %}" class="btn btn-outline-elegante btn-sm"><i class="bi bi-file-earmark-pdf me-1"></i>Descargar PDF</a>
+  </div></div>
+  <div class="col-md-4"><div class="card-elegante p-4">
+    <i class="bi bi-credit-card" style="font-size:22px;color:#0F6E56;"></i>
+    <h6 class="mt-2" style="font-weight:500;">Pagos</h6>
+    <p class="text-secondary small">Detalle de pagos registrados por método y estado.</p>
+    <a href="{% url 'reportes:pagos' %}" class="btn btn-outline-elegante btn-sm"><i class="bi bi-file-earmark-pdf me-1"></i>Descargar PDF</a>
+  </div></div>
+  <div class="col-md-4"><div class="card-elegante p-4">
+    <i class="bi bi-building" style="font-size:22px;color:#0F6E56;"></i>
+    <h6 class="mt-2" style="font-weight:500;">Espacios</h6>
+    <p class="text-secondary small">Inventario de espacios y total de reservaciones.</p>
+    <a href="{% url 'reportes:espacios' %}" class="btn btn-outline-elegante btn-sm"><i class="bi bi-file-earmark-pdf me-1"></i>Descargar PDF</a>
+  </div></div>
+  <div class="col-md-4"><div class="card-elegante p-4">
+    <i class="bi bi-star" style="font-size:22px;color:#0F6E56;"></i>
+    <h6 class="mt-2" style="font-weight:500;">Puntos de fidelización</h6>
+    <p class="text-secondary small">Movimientos de acumulación y canje de puntos.</p>
+    <a href="{% url 'reportes:puntos' %}" class="btn btn-outline-elegante btn-sm"><i class="bi bi-file-earmark-pdf me-1"></i>Descargar PDF</a>
+  </div></div>
+  <div class="col-md-4"><div class="card-elegante p-4">
+    <i class="bi bi-cash-coin" style="font-size:22px;color:#0F6E56;"></i>
+    <h6 class="mt-2" style="font-weight:500;">Ingresos</h6>
+    <p class="text-secondary small">Ingresos totales agrupados por espacio.</p>
+    <a href="{% url 'reportes:ingresos' %}" class="btn btn-outline-elegante btn-sm"><i class="bi bi-file-earmark-pdf me-1"></i>Descargar PDF</a>
+  </div></div>
+</div>
+{% endblock %}

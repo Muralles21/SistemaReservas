@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+{% block titulo_pagina %}{% if object %}Editar rol{% else %}Nuevo rol{% endif %}{% endblock %}
+{% block contenido %}
+<div class="card-elegante p-4" style="max-width:640px;">
+  <form method="post">
+    {% csrf_token %}
+    <div class="mb-3"><label class="form-label">Nombre</label>{{ form.nombre }}</div>
+    <div class="mb-3"><label class="form-label">Clave</label>{{ form.clave }}</div>
+    <div class="mb-3"><label class="form-label">Descripción</label>{{ form.descripcion }}</div>
+    <div class="mb-3"><label class="form-label">Permisos</label>{{ form.permisos }}</div>
+    <button class="btn btn-primario">Guardar</button>
+    <a href="{% url 'usuarios:rol_lista' %}" class="btn btn-outline-elegante">Cancelar</a>
+  </form>
+</div>
+{% endblock %}

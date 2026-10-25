@@ -1,0 +1,6 @@
+{% load static %}
+<a class="auth-marca" href="{% url 'core:inicio' %}" aria-label="{{ NOMBRE_SISTEMA }}: ir al inicio" style="text-decoration:none;">
+  <img src="{% static 'img/logo.svg' %}" alt="" width="56" height="56">
+  <span class="auth-nombre">{{ NOMBRE_SISTEMA }}</span>
+  {% if lema %}<span class="auth-lema">{{ lema }}</span>{% endif %}
+</a>

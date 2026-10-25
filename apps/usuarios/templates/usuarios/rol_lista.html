@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+{% block titulo_pagina %}Roles y permisos{% endblock %}
+{% block contenido %}
+<div class="d-flex justify-content-end mb-3">
+  <a href="{% url 'usuarios:rol_crear' %}" class="btn btn-primario"><i class="bi bi-plus-lg me-1"></i>Nuevo rol</a>
+</div>
+<div class="card-elegante p-3">
+  <table class="tabla-elegante">
+    <thead><tr><th>Nombre</th><th>Clave</th><th>Descripción</th><th></th></tr></thead>
+    <tbody>
+      {% for r in roles %}
+      <tr>
+        <td>{{ r.nombre }}</td><td>{{ r.get_clave_display }}</td><td>{{ r.descripcion }}</td>
+        <td class="text-end">
+          <a href="{% url 'usuarios:rol_editar' r.pk %}" class="btn btn-sm btn-outline-elegante"><i class="bi bi-pencil"></i></a>
+          <a href="{% url 'usuarios:rol_eliminar' r.pk %}" class="btn btn-sm btn-outline-elegante text-danger"><i class="bi bi-trash"></i></a>
+        </td>
+      </tr>
+      {% empty %}
+      <tr><td colspan="4" class="text-center text-secondary py-4">No hay roles registrados.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

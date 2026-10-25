@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+{% block titulo_pagina %}Catálogo de premios{% endblock %}
+{% block contenido %}
+<div class="d-flex justify-content-end mb-3">
+  <a href="{% url 'fidelizacion:premio_crear' %}" class="btn btn-primario"><i class="bi bi-plus-lg me-1"></i>Nuevo premio</a>
+</div>
+<div class="row g-3">
+  {% for p in premios %}
+  <div class="col-md-3">
+    <div class="card-elegante h-100">
+      {% if p.foto %}<img src="{{ p.foto.url }}" class="w-100" style="height:140px;object-fit:cover;border-radius:14px 14px 0 0;">
+      {% else %}<div style="height:140px;background:#F0EFEA;border-radius:14px 14px 0 0;" class="d-flex align-items-center justify-content-center"><i class="bi bi-gift text-secondary" style="font-size:26px;"></i></div>{% endif %}
+      <div class="p-3">
+        <h6 style="font-weight:500;">{{ p.nombre }}</h6>
+        <p class="text-secondary small">{{ p.descripcion|truncatewords:12 }}</p>
+        <p style="font-weight:600;">{{ p.costo_puntos }} pts <span class="text-secondary fw-normal small">· stock {{ p.stock }}</span></p>
+        <div class="d-flex gap-2">
+          <a href="{% url 'fidelizacion:premio_editar' p.pk %}" class="btn btn-sm btn-outline-elegante flex-grow-1">Editar</a>
+          <a href="{% url 'fidelizacion:premio_eliminar' p.pk %}" class="btn btn-sm btn-outline-elegante text-danger"><i class="bi bi-trash"></i></a>
+        </div>
+      </div>
+    </div>
+  </div>
+  {% empty %}
+  <div class="col-12 text-center text-secondary py-5">No hay premios en el catálogo.</div>
+  {% endfor %}
+</div>
+{% endblock %}

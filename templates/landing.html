@@ -1,0 +1,216 @@
+{% extends 'base.html' %}
+{% load static assets imagenes %}
+{% block titulo %}{{ NOMBRE_SISTEMA }} · Reserva canchas de fútbol y salones de eventos{% endblock %}
+{% block body_class %}landing{% endblock %}
+{% block extra_css %}
+<meta name="description" content="Reserva canchas de fútbol y salones de eventos en línea: consulta la disponibilidad en tiempo real, paga en línea o en el local y acumula puntos canjeables por premios.">
+<link rel="stylesheet" href="{% static_v 'css/landing.css' %}">
+{% endblock %}
+
+{% block contenido_publico %}
+<header class="lp-nav" id="lpNav">
+  <nav class="navbar navbar-expand-lg container" aria-label="Navegación principal">
+    <a class="lp-brand" href="#inicio" aria-label="{{ NOMBRE_SISTEMA }}, ir al inicio">
+      <img src="{% static 'img/logo.svg' %}" alt="" width="38" height="38">
+      <span>{{ NOMBRE_SISTEMA }}</span>
+    </a>
+    <button class="lp-toggler d-lg-none" type="button" data-bs-toggle="collapse" data-bs-target="#lpMenu"
+            aria-controls="lpMenu" aria-expanded="false" aria-label="Abrir menú de navegación">
+      <i class="bi bi-list" aria-hidden="true"></i>
+    </button>
+    <div class="collapse navbar-collapse" id="lpMenu">
+      <ul class="navbar-nav mx-auto mb-2 mb-lg-0">
+        <li class="nav-item"><a class="nav-link" href="#canchas">Canchas y salones</a></li>
+        <li class="nav-item"><a class="nav-link" href="#como-funciona">Cómo funciona</a></li>
+        <li class="nav-item"><a class="nav-link" href="#puntos">Puntos y premios</a></li>
+      </ul>
+      <div class="lp-acciones">
+        <a class="btn btn-outline-elegante" href="{% url 'autenticacion:login' %}">Iniciar sesión</a>
+        <a class="btn btn-primario" href="{% url 'autenticacion:registro' %}">Crear cuenta</a>
+      </div>
+    </div>
+  </nav>
+</header>
+
+<main id="contenido-principal">
+  <!-- ============ HERO ============ -->
+  <section class="lp-hero" id="inicio" aria-labelledby="lp-titulo">
+    <img class="lp-hero-img" src="{% static 'img/fondos/auth.jpg' %}"
+         srcset="{% static 'img/fondos/auth-sm.jpg' %} 960w, {% static 'img/fondos/auth.jpg' %} 1920w"
+         sizes="100vw" alt="" width="1920" height="1080" fetchpriority="high" aria-hidden="true">
+    <div class="lp-hero-shade" aria-hidden="true"></div>
+
+    <div class="container lp-hero-grid">
+      <div>
+        <span class="lp-eyebrow"><i class="bi bi-lightning-charge-fill" aria-hidden="true"></i> Reservaciones en línea, 24/7</span>
+        <h1 class="lp-title" id="lp-titulo">Tu cancha,<br>tu horario,<br><span>tu juego.</span></h1>
+        <p class="lp-lead">Consulta la disponibilidad en tiempo real, reserva canchas de fútbol y salones de eventos en minutos, paga en línea o en el local y acumula puntos por cada reservación.</p>
+        <div class="lp-cta">
+          <a class="btn btn-primario" href="{% url 'autenticacion:registro' %}">Crear mi cuenta <i class="bi bi-arrow-right" aria-hidden="true"></i></a>
+          <a class="btn btn-outline-elegante" href="{% url 'autenticacion:login' %}">Ya tengo cuenta</a>
+        </div>
+        <ul class="lp-trust">
+          <li><i class="bi bi-check-circle-fill" aria-hidden="true"></i> Sin llamadas ni mensajes</li>
+          <li><i class="bi bi-check-circle-fill" aria-hidden="true"></i> Sin reservas duplicadas</li>
+          <li><i class="bi bi-check-circle-fill" aria-hidden="true"></i> Premios por tu lealtad</li>
+        </ul>
+      </div>
+
+      <aside class="lp-panel" aria-label="Resumen del servicio">
+        <h2>Todo en un solo lugar</h2>
+        {% if total_canchas or total_salones %}
+        <div class="lp-stats">
+          <div class="lp-stat"><strong>{{ total_canchas }}</strong><span>{{ total_canchas|pluralize:"cancha disponible,canchas disponibles" }}</span></div>
+          <div class="lp-stat"><strong>{{ total_salones }}</strong><span>{{ total_salones|pluralize:"salón disponible,salones disponibles" }}</span></div>
+        </div>
+        {% endif %}
+        <div class="lp-feature">
+          <span class="ico"><i class="bi bi-calendar3" aria-hidden="true"></i></span>
+          <div><strong>Calendario en tiempo real</strong><span class="t">Elige un horario libre; el sistema evita las dobles reservas.</span></div>
+        </div>
+        <div class="lp-feature">
+          <span class="ico"><i class="bi bi-credit-card-2-front" aria-hidden="true"></i></span>
+          <div><strong>Paga como prefieras</strong><span class="t">Con tarjeta se confirma al instante; en efectivo, al llegar.</span></div>
+        </div>
+        <div class="lp-feature">
+          <span class="ico"><i class="bi bi-gift" aria-hidden="true"></i></span>
+          <div><strong>Gana puntos y premios</strong><span class="t">Cada reservación finalizada suma puntos canjeables.</span></div>
+        </div>
+      </aside>
+    </div>
+    <a class="lp-scroll" href="#canchas" aria-label="Ver canchas y salones"><i class="bi bi-chevron-double-down" aria-hidden="true"></i></a>
+  </section>
+
+  <!-- ============ CANCHAS Y SALONES ============ -->
+  <section class="lp-section" id="canchas" aria-labelledby="lp-canchas-t">
+    <div class="container">
+      <div class="lp-head reveal">
+        <span class="lp-kicker">Nuestras instalaciones</span>
+        <h2 id="lp-canchas-t">Canchas y salones listos para reservar</h2>
+        <p>Elige el espacio ideal para tu partido, torneo o evento y revisa su capacidad y precio antes de reservar.</p>
+      </div>
+      <div class="row g-4">
+        {% for e in espacios %}
+        <div class="col-md-6 col-lg-4 reveal" style="--d: {{ forloop.counter0 }}">
+          <article class="lp-card">
+            <div class="lp-card-media">
+              {% if e.foto_principal %}
+                <img src="{% miniatura e.foto_principal 720 %}" alt="Fotografía de {{ e.nombre }}" width="640" height="400" loading="lazy" decoding="async">
+              {% else %}
+                <div class="lp-card-ph" aria-hidden="true"><i class="bi bi-image"></i></div>
+              {% endif %}
+              <span class="lp-chip">{{ e.get_tipo_display }}</span>
+            </div>
+            <div class="lp-card-body">
+              <h3>{{ e.nombre }}</h3>
+              <ul class="lp-meta">
+                <li><i class="bi bi-people" aria-hidden="true"></i>Hasta {{ e.capacidad }} personas</li>
+              </ul>
+              {% if e.descripcion %}<p>{{ e.descripcion|truncatewords:16 }}</p>{% endif %}
+              <div class="lp-card-foot">
+                <div class="lp-price"><strong>Q{{ e.precio_por_evento }}</strong><span>por evento</span></div>
+                <a class="btn btn-primario btn-sm" href="{% url 'autenticacion:login' %}">Reservar</a>
+              </div>
+            </div>
+          </article>
+        </div>
+        {% empty %}
+        <div class="col-12 reveal">
+          <div class="lp-empty">
+            <i class="bi bi-building" aria-hidden="true"></i>
+            <strong>Pronto publicaremos nuestras canchas y salones.</strong>
+            <p class="mb-0 mt-1">Crea tu cuenta para estar al tanto de la disponibilidad.</p>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+      <p class="text-center mt-4 mb-0 reveal text-secondary">¿Primera vez? <a href="{% url 'autenticacion:registro' %}">Crea tu cuenta gratis</a> y reserva en minutos.</p>
+    </div>
+  </section>
+
+  <!-- ============ CÓMO FUNCIONA ============ -->
+  <section class="lp-section" id="como-funciona" aria-labelledby="lp-como-t">
+    <div class="container">
+      <div class="lp-head center reveal">
+        <span class="lp-kicker">Cómo funciona</span>
+        <h2 id="lp-como-t">Reservar es así de fácil</h2>
+        <p>Cuatro pasos y tu horario queda asegurado.</p>
+      </div>
+      <div class="row g-4">
+        <div class="col-md-6 col-lg-3 reveal" style="--d: 0">
+          <div class="lp-step"><span class="num" aria-hidden="true">1</span><h3>Crea tu cuenta</h3><p>Regístrate con tus datos en menos de un minuto.</p><i class="bi bi-person-plus bg" aria-hidden="true"></i></div>
+        </div>
+        <div class="col-md-6 col-lg-3 reveal" style="--d: 1">
+          <div class="lp-step"><span class="num" aria-hidden="true">2</span><h3>Elige cancha y horario</h3><p>Consulta el calendario y selecciona un espacio disponible.</p><i class="bi bi-calendar-check bg" aria-hidden="true"></i></div>
+        </div>
+        <div class="col-md-6 col-lg-3 reveal" style="--d: 2">
+          <div class="lp-step"><span class="num" aria-hidden="true">3</span><h3>Paga y confirma</h3><p>Con tarjeta se confirma al instante; en efectivo, al llegar al local.</p><i class="bi bi-credit-card bg" aria-hidden="true"></i></div>
+        </div>
+        <div class="col-md-6 col-lg-3 reveal" style="--d: 3">
+          <div class="lp-step"><span class="num" aria-hidden="true">4</span><h3>Juega y acumula</h3><p>Disfruta tu reservación y suma puntos para canjear por premios.</p><i class="bi bi-trophy bg" aria-hidden="true"></i></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ PUNTOS Y PREMIOS ============ -->
+  <section class="lp-section" id="puntos" aria-labelledby="lp-puntos-t">
+    <div class="container lp-points">
+      <div class="reveal">
+        <span class="lp-kicker">Programa de fidelización</span>
+        <h2 class="lp-h2" id="lp-puntos-t">Juega más, gana más</h2>
+        <p class="text-secondary mb-0">Cada reservación finalizada suma puntos a tu cuenta. Acumúlalos y cámbialos por premios del catálogo.</p>
+        <ul class="lp-checks">
+          <li><i class="bi bi-check2-circle" aria-hidden="true"></i><span>Puntos automáticos por cada reservación finalizada.</span></li>
+          <li><i class="bi bi-check2-circle" aria-hidden="true"></i><span>Consulta tu saldo e historial desde tu portal.</span></li>
+          <li><i class="bi bi-check2-circle" aria-hidden="true"></i><span>Canjea tus puntos tú mismo, cuando quieras.</span></li>
+        </ul>
+        <a class="btn btn-primario" href="{% url 'autenticacion:registro' %}">Empezar a acumular <i class="bi bi-arrow-right" aria-hidden="true"></i></a>
+      </div>
+      <div class="reveal" style="--d: 1">
+        {% if premios %}
+        <div class="lp-prizes">
+          {% for p in premios %}
+          <div class="lp-prize">
+            <div class="thumb">
+              {% if p.foto %}<img src="{% miniatura p.foto 480 %}" alt="{{ p.nombre }}" loading="lazy" decoding="async" width="320" height="240">{% else %}<i class="bi bi-gift" aria-hidden="true"></i>{% endif %}
+            </div>
+            <strong>{{ p.nombre }}</strong>
+            <span class="pts"><i class="bi bi-star-fill" aria-hidden="true"></i>{{ p.costo_puntos }} puntos</span>
+          </div>
+          {% endfor %}
+        </div>
+        {% else %}
+        <div class="lp-empty"><i class="bi bi-gift" aria-hidden="true"></i><strong>Estamos preparando nuevos premios.</strong><p class="mb-0 mt-1">Crea tu cuenta y empieza a sumar puntos desde tu primera reservación.</p></div>
+        {% endif %}
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ LLAMADA FINAL ============ -->
+  <section class="lp-section pt-0" aria-labelledby="lp-final-t">
+    <div class="container">
+      <div class="lp-band reveal">
+        <h2 class="lp-h2" id="lp-final-t">¿Listo para jugar?</h2>
+        <p>Crea tu cuenta gratis y asegura tu próxima cancha o salón hoy mismo.</p>
+        <div class="d-flex flex-wrap justify-content-center gap-2">
+          <a class="btn btn-primario" style="min-height:52px;padding:0 28px;" href="{% url 'autenticacion:registro' %}">Crear mi cuenta</a>
+          <a class="btn btn-outline-elegante" style="min-height:52px;padding:0 28px;" href="{% url 'autenticacion:login' %}">Iniciar sesión</a>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="lp-footer">
+  <div class="container d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-3">
+    <a class="lp-brand" href="#inicio"><img src="{% static 'img/logo.svg' %}" alt="" width="38" height="38"><span>{{ NOMBRE_SISTEMA }}</span></a>
+    <ul>
+      <li><a href="#canchas">Canchas y salones</a></li>
+      <li><a href="{% url 'autenticacion:login' %}">Iniciar sesión</a></li>
+      <li><a href="{% url 'autenticacion:registro' %}">Crear cuenta</a></li>
+    </ul>
+    <small>© {% now "Y" %} {{ NOMBRE_SISTEMA }}. Todos los derechos reservados.</small>
+  </div>
+</footer>
+{% endblock %}
